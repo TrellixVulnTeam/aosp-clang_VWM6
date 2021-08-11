@@ -15,6 +15,7 @@ enum class Directive {
   OMPD_atomic,
   OMPD_barrier,
   OMPD_begin_assumes,
+  OMPD_begin_declare_target,
   OMPD_begin_declare_variant,
   OMPD_cancel,
   OMPD_cancellation_point,
@@ -96,17 +97,22 @@ enum class Directive {
   OMPD_teams_distribute_parallel_for_simd,
   OMPD_teams_distribute_simd,
   OMPD_threadprivate,
+  OMPD_tile,
   OMPD_unknown,
   OMPD_workshare,
+  OMPD_dispatch,
+  OMPD_interop,
+  OMPD_masked,
 };
 
-static constexpr std::size_t Directive_enumSize = 88;
+static constexpr std::size_t Directive_enumSize = 93;
 
 constexpr auto OMPD_allocate = llvm::omp::Directive::OMPD_allocate;
 constexpr auto OMPD_assumes = llvm::omp::Directive::OMPD_assumes;
 constexpr auto OMPD_atomic = llvm::omp::Directive::OMPD_atomic;
 constexpr auto OMPD_barrier = llvm::omp::Directive::OMPD_barrier;
 constexpr auto OMPD_begin_assumes = llvm::omp::Directive::OMPD_begin_assumes;
+constexpr auto OMPD_begin_declare_target = llvm::omp::Directive::OMPD_begin_declare_target;
 constexpr auto OMPD_begin_declare_variant = llvm::omp::Directive::OMPD_begin_declare_variant;
 constexpr auto OMPD_cancel = llvm::omp::Directive::OMPD_cancel;
 constexpr auto OMPD_cancellation_point = llvm::omp::Directive::OMPD_cancellation_point;
@@ -188,8 +194,12 @@ constexpr auto OMPD_teams_distribute_parallel_for = llvm::omp::Directive::OMPD_t
 constexpr auto OMPD_teams_distribute_parallel_for_simd = llvm::omp::Directive::OMPD_teams_distribute_parallel_for_simd;
 constexpr auto OMPD_teams_distribute_simd = llvm::omp::Directive::OMPD_teams_distribute_simd;
 constexpr auto OMPD_threadprivate = llvm::omp::Directive::OMPD_threadprivate;
+constexpr auto OMPD_tile = llvm::omp::Directive::OMPD_tile;
 constexpr auto OMPD_unknown = llvm::omp::Directive::OMPD_unknown;
 constexpr auto OMPD_workshare = llvm::omp::Directive::OMPD_workshare;
+constexpr auto OMPD_dispatch = llvm::omp::Directive::OMPD_dispatch;
+constexpr auto OMPD_interop = llvm::omp::Directive::OMPD_interop;
+constexpr auto OMPD_masked = llvm::omp::Directive::OMPD_masked;
 
 enum class Clause {
   OMPC_acq_rel,
@@ -214,6 +224,7 @@ enum class Clause {
   OMPC_dist_schedule,
   OMPC_dynamic_allocators,
   OMPC_exclusive,
+  OMPC_filter,
   OMPC_final,
   OMPC_firstprivate,
   OMPC_flush,
@@ -224,6 +235,7 @@ enum class Clause {
   OMPC_in_reduction,
   OMPC_inbranch,
   OMPC_inclusive,
+  OMPC_init,
   OMPC_is_device_ptr,
   OMPC_lastprivate,
   OMPC_linear,
@@ -233,8 +245,10 @@ enum class Clause {
   OMPC_mergeable,
   OMPC_nogroup,
   OMPC_nowait,
+  OMPC_nocontext,
   OMPC_nontemporal,
   OMPC_notinbranch,
+  OMPC_novariants,
   OMPC_num_tasks,
   OMPC_num_teams,
   OMPC_num_threads,
@@ -254,6 +268,7 @@ enum class Clause {
   OMPC_shared,
   OMPC_simd,
   OMPC_simdlen,
+  OMPC_sizes,
   OMPC_task_reduction,
   OMPC_thread_limit,
   OMPC_threadprivate,
@@ -265,13 +280,14 @@ enum class Clause {
   OMPC_unknown,
   OMPC_untied,
   OMPC_update,
+  OMPC_use,
   OMPC_use_device_addr,
   OMPC_use_device_ptr,
   OMPC_uses_allocators,
   OMPC_write,
 };
 
-static constexpr std::size_t Clause_enumSize = 77;
+static constexpr std::size_t Clause_enumSize = 83;
 
 constexpr auto OMPC_acq_rel = llvm::omp::Clause::OMPC_acq_rel;
 constexpr auto OMPC_acquire = llvm::omp::Clause::OMPC_acquire;
@@ -295,6 +311,7 @@ constexpr auto OMPC_device_type = llvm::omp::Clause::OMPC_device_type;
 constexpr auto OMPC_dist_schedule = llvm::omp::Clause::OMPC_dist_schedule;
 constexpr auto OMPC_dynamic_allocators = llvm::omp::Clause::OMPC_dynamic_allocators;
 constexpr auto OMPC_exclusive = llvm::omp::Clause::OMPC_exclusive;
+constexpr auto OMPC_filter = llvm::omp::Clause::OMPC_filter;
 constexpr auto OMPC_final = llvm::omp::Clause::OMPC_final;
 constexpr auto OMPC_firstprivate = llvm::omp::Clause::OMPC_firstprivate;
 constexpr auto OMPC_flush = llvm::omp::Clause::OMPC_flush;
@@ -305,6 +322,7 @@ constexpr auto OMPC_if = llvm::omp::Clause::OMPC_if;
 constexpr auto OMPC_in_reduction = llvm::omp::Clause::OMPC_in_reduction;
 constexpr auto OMPC_inbranch = llvm::omp::Clause::OMPC_inbranch;
 constexpr auto OMPC_inclusive = llvm::omp::Clause::OMPC_inclusive;
+constexpr auto OMPC_init = llvm::omp::Clause::OMPC_init;
 constexpr auto OMPC_is_device_ptr = llvm::omp::Clause::OMPC_is_device_ptr;
 constexpr auto OMPC_lastprivate = llvm::omp::Clause::OMPC_lastprivate;
 constexpr auto OMPC_linear = llvm::omp::Clause::OMPC_linear;
@@ -314,8 +332,10 @@ constexpr auto OMPC_match = llvm::omp::Clause::OMPC_match;
 constexpr auto OMPC_mergeable = llvm::omp::Clause::OMPC_mergeable;
 constexpr auto OMPC_nogroup = llvm::omp::Clause::OMPC_nogroup;
 constexpr auto OMPC_nowait = llvm::omp::Clause::OMPC_nowait;
+constexpr auto OMPC_nocontext = llvm::omp::Clause::OMPC_nocontext;
 constexpr auto OMPC_nontemporal = llvm::omp::Clause::OMPC_nontemporal;
 constexpr auto OMPC_notinbranch = llvm::omp::Clause::OMPC_notinbranch;
+constexpr auto OMPC_novariants = llvm::omp::Clause::OMPC_novariants;
 constexpr auto OMPC_num_tasks = llvm::omp::Clause::OMPC_num_tasks;
 constexpr auto OMPC_num_teams = llvm::omp::Clause::OMPC_num_teams;
 constexpr auto OMPC_num_threads = llvm::omp::Clause::OMPC_num_threads;
@@ -335,6 +355,7 @@ constexpr auto OMPC_seq_cst = llvm::omp::Clause::OMPC_seq_cst;
 constexpr auto OMPC_shared = llvm::omp::Clause::OMPC_shared;
 constexpr auto OMPC_simd = llvm::omp::Clause::OMPC_simd;
 constexpr auto OMPC_simdlen = llvm::omp::Clause::OMPC_simdlen;
+constexpr auto OMPC_sizes = llvm::omp::Clause::OMPC_sizes;
 constexpr auto OMPC_task_reduction = llvm::omp::Clause::OMPC_task_reduction;
 constexpr auto OMPC_thread_limit = llvm::omp::Clause::OMPC_thread_limit;
 constexpr auto OMPC_threadprivate = llvm::omp::Clause::OMPC_threadprivate;
@@ -346,6 +367,7 @@ constexpr auto OMPC_uniform = llvm::omp::Clause::OMPC_uniform;
 constexpr auto OMPC_unknown = llvm::omp::Clause::OMPC_unknown;
 constexpr auto OMPC_untied = llvm::omp::Clause::OMPC_untied;
 constexpr auto OMPC_update = llvm::omp::Clause::OMPC_update;
+constexpr auto OMPC_use = llvm::omp::Clause::OMPC_use;
 constexpr auto OMPC_use_device_addr = llvm::omp::Clause::OMPC_use_device_addr;
 constexpr auto OMPC_use_device_ptr = llvm::omp::Clause::OMPC_use_device_ptr;
 constexpr auto OMPC_uses_allocators = llvm::omp::Clause::OMPC_uses_allocators;
@@ -358,13 +380,15 @@ enum class OrderKind {
 constexpr auto OMP_ORDER_concurrent = llvm::omp::OrderKind::OMP_ORDER_concurrent;
 
 enum class ProcBindKind {
+  OMP_PROC_BIND_primary=5,
   OMP_PROC_BIND_master=2,
   OMP_PROC_BIND_close=3,
   OMP_PROC_BIND_spread=4,
-  OMP_PROC_BIND_default=5,
-  OMP_PROC_BIND_unknown=6,
+  OMP_PROC_BIND_default=6,
+  OMP_PROC_BIND_unknown=7,
 };
 
+constexpr auto OMP_PROC_BIND_primary = llvm::omp::ProcBindKind::OMP_PROC_BIND_primary;
 constexpr auto OMP_PROC_BIND_master = llvm::omp::ProcBindKind::OMP_PROC_BIND_master;
 constexpr auto OMP_PROC_BIND_close = llvm::omp::ProcBindKind::OMP_PROC_BIND_close;
 constexpr auto OMP_PROC_BIND_spread = llvm::omp::ProcBindKind::OMP_PROC_BIND_spread;

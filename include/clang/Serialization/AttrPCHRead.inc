@@ -502,6 +502,15 @@
     New->setPackExpansion(isPackExpansion);
     break;
   }
+  case attr::BuiltinAlias: {
+    bool isImplicit = Record.readInt();
+    bool isPackExpansion = Record.readInt();
+    IdentifierInfo * builtinName = Record.readIdentifier();
+    New = new (Context) BuiltinAliasAttr(Context, Info, builtinName);
+    New->setImplicit(isImplicit);
+    New->setPackExpansion(isPackExpansion);
+    break;
+  }
   case attr::C11NoReturn: {
     bool isInherited = Record.readInt();
     bool isImplicit = Record.readInt();
@@ -1211,6 +1220,16 @@
     New->setPackExpansion(isPackExpansion);
     break;
   }
+  case attr::HIPManaged: {
+    bool isInherited = Record.readInt();
+    bool isImplicit = Record.readInt();
+    bool isPackExpansion = Record.readInt();
+    New = new (Context) HIPManagedAttr(Context, Info);
+    cast<InheritableAttr>(New)->setInherited(isInherited);
+    New->setImplicit(isImplicit);
+    New->setPackExpansion(isPackExpansion);
+    break;
+  }
   case attr::Hot: {
     bool isInherited = Record.readInt();
     bool isImplicit = Record.readInt();
@@ -1391,6 +1410,17 @@
     LoopHintAttr::LoopHintState state(static_cast<LoopHintAttr::LoopHintState>(Record.readInt()));
     Expr * value = Record.readExpr();
     New = new (Context) LoopHintAttr(Context, Info, option, state, value);
+    New->setImplicit(isImplicit);
+    New->setPackExpansion(isPackExpansion);
+    break;
+  }
+  case attr::M68kInterrupt: {
+    bool isInherited = Record.readInt();
+    bool isImplicit = Record.readInt();
+    bool isPackExpansion = Record.readInt();
+    unsigned number = Record.readInt();
+    New = new (Context) M68kInterruptAttr(Context, Info, number);
+    cast<InheritableAttr>(New)->setInherited(isInherited);
     New->setImplicit(isImplicit);
     New->setPackExpansion(isPackExpansion);
     break;
@@ -1576,6 +1606,14 @@
     bool isPackExpansion = Record.readInt();
     IdentifierInfo * mode = Record.readIdentifier();
     New = new (Context) ModeAttr(Context, Info, mode);
+    New->setImplicit(isImplicit);
+    New->setPackExpansion(isPackExpansion);
+    break;
+  }
+  case attr::MustTail: {
+    bool isImplicit = Record.readInt();
+    bool isPackExpansion = Record.readInt();
+    New = new (Context) MustTailAttr(Context, Info);
     New->setImplicit(isImplicit);
     New->setPackExpansion(isPackExpansion);
     break;
@@ -2424,12 +2462,10 @@
     break;
   }
   case attr::OpenCLUnrollHint: {
-    bool isInherited = Record.readInt();
     bool isImplicit = Record.readInt();
     bool isPackExpansion = Record.readInt();
     unsigned unrollHint = Record.readInt();
     New = new (Context) OpenCLUnrollHintAttr(Context, Info, unrollHint);
-    cast<InheritableAttr>(New)->setInherited(isInherited);
     New->setImplicit(isImplicit);
     New->setPackExpansion(isPackExpansion);
     break;
@@ -2801,6 +2837,16 @@
     New->setPackExpansion(isPackExpansion);
     break;
   }
+  case attr::Retain: {
+    bool isInherited = Record.readInt();
+    bool isImplicit = Record.readInt();
+    bool isPackExpansion = Record.readInt();
+    New = new (Context) RetainAttr(Context, Info);
+    cast<InheritableAttr>(New)->setInherited(isInherited);
+    New->setImplicit(isImplicit);
+    New->setPackExpansion(isPackExpansion);
+    break;
+  }
   case attr::ReturnTypestate: {
     bool isInherited = Record.readInt();
     bool isImplicit = Record.readInt();
@@ -2930,6 +2976,16 @@
     New->setPackExpansion(isPackExpansion);
     break;
   }
+  case attr::StandaloneDebug: {
+    bool isInherited = Record.readInt();
+    bool isImplicit = Record.readInt();
+    bool isPackExpansion = Record.readInt();
+    New = new (Context) StandaloneDebugAttr(Context, Info);
+    cast<InheritableAttr>(New)->setInherited(isInherited);
+    New->setImplicit(isImplicit);
+    New->setPackExpansion(isPackExpansion);
+    break;
+  }
   case attr::StdCall: {
     bool isInherited = Record.readInt();
     bool isImplicit = Record.readInt();
@@ -2974,6 +3030,28 @@
     SwiftAsyncAttr::Kind kind(static_cast<SwiftAsyncAttr::Kind>(Record.readInt()));
     ParamIdx completionHandlerIndex = ParamIdx::deserialize(Record.readInt());
     New = new (Context) SwiftAsyncAttr(Context, Info, kind, completionHandlerIndex);
+    cast<InheritableAttr>(New)->setInherited(isInherited);
+    New->setImplicit(isImplicit);
+    New->setPackExpansion(isPackExpansion);
+    break;
+  }
+  case attr::SwiftAsyncContext: {
+    bool isInherited = Record.readInt();
+    bool isImplicit = Record.readInt();
+    bool isPackExpansion = Record.readInt();
+    New = new (Context) SwiftAsyncContextAttr(Context, Info);
+    cast<InheritableAttr>(New)->setInherited(isInherited);
+    New->setImplicit(isImplicit);
+    New->setPackExpansion(isPackExpansion);
+    break;
+  }
+  case attr::SwiftAsyncError: {
+    bool isInherited = Record.readInt();
+    bool isImplicit = Record.readInt();
+    bool isPackExpansion = Record.readInt();
+    SwiftAsyncErrorAttr::ConventionKind convention(static_cast<SwiftAsyncErrorAttr::ConventionKind>(Record.readInt()));
+    unsigned handlerParamIdx = Record.readInt();
+    New = new (Context) SwiftAsyncErrorAttr(Context, Info, convention, handlerParamIdx);
     cast<InheritableAttr>(New)->setInherited(isInherited);
     New->setImplicit(isImplicit);
     New->setPackExpansion(isPackExpansion);

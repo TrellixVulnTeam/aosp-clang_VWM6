@@ -359,6 +359,13 @@ Record.push_back(SA->getInterrupt());
 Record.push_back(SA->getType());
     break;
   }
+  case attr::BuiltinAlias: {
+    const auto *SA = cast<BuiltinAliasAttr>(A);
+    Record.push_back(A->isImplicit());
+    Record.push_back(A->isPackExpansion());
+    Record.AddIdentifierRef(SA->getBuiltinName());
+    break;
+  }
   case attr::C11NoReturn: {
     const auto *SA = cast<C11NoReturnAttr>(A);
     Record.push_back(SA->isInherited());
@@ -860,6 +867,13 @@ Record.push_back(SA->getExtensibility());
     Record.push_back(A->isPackExpansion());
     break;
   }
+  case attr::HIPManaged: {
+    const auto *SA = cast<HIPManagedAttr>(A);
+    Record.push_back(SA->isInherited());
+    Record.push_back(A->isImplicit());
+    Record.push_back(A->isPackExpansion());
+    break;
+  }
   case attr::Hot: {
     const auto *SA = cast<HotAttr>(A);
     Record.push_back(SA->isInherited());
@@ -989,6 +1003,14 @@ Record.push_back(SA->getExtensibility());
 Record.push_back(SA->getOption());
 Record.push_back(SA->getState());
     Record.AddStmt(SA->getValue());
+    break;
+  }
+  case attr::M68kInterrupt: {
+    const auto *SA = cast<M68kInterruptAttr>(A);
+    Record.push_back(SA->isInherited());
+    Record.push_back(A->isImplicit());
+    Record.push_back(A->isPackExpansion());
+    Record.push_back(SA->getNumber());
     break;
   }
   case attr::MIGServerRoutine: {
@@ -1121,6 +1143,11 @@ Record.push_back(SA->getInterrupt());
     Record.push_back(A->isImplicit());
     Record.push_back(A->isPackExpansion());
     Record.AddIdentifierRef(SA->getMode());
+    break;
+  }
+  case attr::MustTail: {
+    Record.push_back(A->isImplicit());
+    Record.push_back(A->isPackExpansion());
     break;
   }
   case attr::NSConsumed: {
@@ -1702,7 +1729,6 @@ Record.push_back(SA->getFamily());
   }
   case attr::OpenCLUnrollHint: {
     const auto *SA = cast<OpenCLUnrollHintAttr>(A);
-    Record.push_back(SA->isInherited());
     Record.push_back(A->isImplicit());
     Record.push_back(A->isPackExpansion());
     Record.push_back(SA->getUnrollHint());
@@ -1967,6 +1993,13 @@ Record.push_back(SA->getInterrupt());
     Record.push_back(A->isPackExpansion());
     break;
   }
+  case attr::Retain: {
+    const auto *SA = cast<RetainAttr>(A);
+    Record.push_back(SA->isInherited());
+    Record.push_back(A->isImplicit());
+    Record.push_back(A->isPackExpansion());
+    break;
+  }
   case attr::ReturnTypestate: {
     const auto *SA = cast<ReturnTypestateAttr>(A);
     Record.push_back(SA->isInherited());
@@ -2058,6 +2091,13 @@ Record.push_back(SA->getNewState());
     Record.push_back(A->isPackExpansion());
     break;
   }
+  case attr::StandaloneDebug: {
+    const auto *SA = cast<StandaloneDebugAttr>(A);
+    Record.push_back(SA->isInherited());
+    Record.push_back(A->isImplicit());
+    Record.push_back(A->isPackExpansion());
+    break;
+  }
   case attr::StdCall: {
     const auto *SA = cast<StdCallAttr>(A);
     Record.push_back(SA->isInherited());
@@ -2088,6 +2128,22 @@ Record.push_back(SA->getNewState());
     Record.push_back(A->isPackExpansion());
 Record.push_back(SA->getKind());
     Record.push_back(SA->getCompletionHandlerIndex().serialize());
+    break;
+  }
+  case attr::SwiftAsyncContext: {
+    const auto *SA = cast<SwiftAsyncContextAttr>(A);
+    Record.push_back(SA->isInherited());
+    Record.push_back(A->isImplicit());
+    Record.push_back(A->isPackExpansion());
+    break;
+  }
+  case attr::SwiftAsyncError: {
+    const auto *SA = cast<SwiftAsyncErrorAttr>(A);
+    Record.push_back(SA->isInherited());
+    Record.push_back(A->isImplicit());
+    Record.push_back(A->isPackExpansion());
+Record.push_back(SA->getConvention());
+    Record.push_back(SA->getHandlerParamIdx());
     break;
   }
   case attr::SwiftAsyncName: {

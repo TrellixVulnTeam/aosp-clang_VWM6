@@ -9,6 +9,13 @@
 #ifndef LLVM_CLANG_ATTR_CLASSES_INC
 #define LLVM_CLANG_ATTR_CLASSES_INC
 
+static inline void DelimitAttributeArgument(raw_ostream& OS, bool& IsFirst) {
+  if (IsFirst) {
+    IsFirst = false;
+    OS << "(";
+  } else
+    OS << ", ";
+}
 class AArch64VectorPcsAttr : public InheritableAttr {
 public:
   enum Spelling {
@@ -1734,6 +1741,43 @@ public:
 
 
   static bool classof(const Attr *A) { return A->getKind() == attr::Blocks; }
+};
+
+class BuiltinAliasAttr : public Attr {
+IdentifierInfo * builtinName;
+
+public:
+  enum Spelling {
+    CXX11_clang_builtin_alias = 0,
+    C2x_clang_builtin_alias = 1,
+    GNU_clang_builtin_alias = 2,
+  SpellingNotCalculated = 15
+
+  };
+
+  // Factory methods
+  static BuiltinAliasAttr *CreateImplicit(ASTContext &Ctx, IdentifierInfo * BuiltinName, const AttributeCommonInfo &CommonInfo = {SourceRange{}});
+  static BuiltinAliasAttr *Create(ASTContext &Ctx, IdentifierInfo * BuiltinName, const AttributeCommonInfo &CommonInfo);
+  static BuiltinAliasAttr *CreateImplicit(ASTContext &Ctx, IdentifierInfo * BuiltinName, SourceRange Range, AttributeCommonInfo::Syntax Syntax, BuiltinAliasAttr::Spelling S = static_cast<Spelling>(SpellingNotCalculated));
+  static BuiltinAliasAttr *Create(ASTContext &Ctx, IdentifierInfo * BuiltinName, SourceRange Range, AttributeCommonInfo::Syntax Syntax, BuiltinAliasAttr::Spelling S = static_cast<Spelling>(SpellingNotCalculated));
+
+  // Constructors
+  BuiltinAliasAttr(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo
+              , IdentifierInfo * BuiltinName
+             );
+
+  BuiltinAliasAttr *clone(ASTContext &C) const;
+  void printPretty(raw_ostream &OS,
+                   const PrintingPolicy &Policy) const;
+  const char *getSpelling() const;
+  Spelling getSemanticSpelling() const;
+  IdentifierInfo * getBuiltinName() const {
+    return builtinName;
+  }
+
+
+
+  static bool classof(const Attr *A) { return A->getKind() == attr::BuiltinAlias; }
 };
 
 class C11NoReturnAttr : public InheritableAttr {
@@ -3990,6 +4034,34 @@ public:
   static bool classof(const Attr *A) { return A->getKind() == attr::GuardedVar; }
 };
 
+class HIPManagedAttr : public InheritableAttr {
+public:
+  enum Spelling {
+    GNU_managed = 0,
+    Declspec_managed = 1,
+  SpellingNotCalculated = 15
+
+  };
+
+  // Factory methods
+  static HIPManagedAttr *CreateImplicit(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo = {SourceRange{}});
+  static HIPManagedAttr *Create(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo);
+  static HIPManagedAttr *CreateImplicit(ASTContext &Ctx, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+  static HIPManagedAttr *Create(ASTContext &Ctx, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+
+  // Constructors
+  HIPManagedAttr(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo
+             );
+
+  HIPManagedAttr *clone(ASTContext &C) const;
+  void printPretty(raw_ostream &OS,
+                   const PrintingPolicy &Policy) const;
+  const char *getSpelling() const;
+
+
+  static bool classof(const Attr *A) { return A->getKind() == attr::HIPManaged; }
+};
+
 class HotAttr : public InheritableAttr {
 public:
   enum Spelling {
@@ -4641,6 +4713,34 @@ public:
   static bool classof(const Attr *A) { return A->getKind() == attr::LoopHint; }
 };
 
+class M68kInterruptAttr : public InheritableAttr {
+unsigned number;
+
+public:
+  // Factory methods
+  static M68kInterruptAttr *CreateImplicit(ASTContext &Ctx, unsigned Number, const AttributeCommonInfo &CommonInfo = {SourceRange{}});
+  static M68kInterruptAttr *Create(ASTContext &Ctx, unsigned Number, const AttributeCommonInfo &CommonInfo);
+  static M68kInterruptAttr *CreateImplicit(ASTContext &Ctx, unsigned Number, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+  static M68kInterruptAttr *Create(ASTContext &Ctx, unsigned Number, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+
+  // Constructors
+  M68kInterruptAttr(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo
+              , unsigned Number
+             );
+
+  M68kInterruptAttr *clone(ASTContext &C) const;
+  void printPretty(raw_ostream &OS,
+                   const PrintingPolicy &Policy) const;
+  const char *getSpelling() const;
+  unsigned getNumber() const {
+    return number;
+  }
+
+
+
+  static bool classof(const Attr *A) { return A->getKind() == attr::M68kInterrupt; }
+};
+
 class MIGServerRoutineAttr : public InheritableAttr {
 public:
   enum Spelling {
@@ -5218,6 +5318,35 @@ public:
 
 
   static bool classof(const Attr *A) { return A->getKind() == attr::Mode; }
+};
+
+class MustTailAttr : public StmtAttr {
+public:
+  enum Spelling {
+    GNU_musttail = 0,
+    CXX11_clang_musttail = 1,
+    C2x_clang_musttail = 2,
+  SpellingNotCalculated = 15
+
+  };
+
+  // Factory methods
+  static MustTailAttr *CreateImplicit(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo = {SourceRange{}});
+  static MustTailAttr *Create(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo);
+  static MustTailAttr *CreateImplicit(ASTContext &Ctx, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+  static MustTailAttr *Create(ASTContext &Ctx, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+
+  // Constructors
+  MustTailAttr(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo
+             );
+
+  MustTailAttr *clone(ASTContext &C) const;
+  void printPretty(raw_ostream &OS,
+                   const PrintingPolicy &Policy) const;
+  const char *getSpelling() const;
+
+
+  static bool classof(const Attr *A) { return A->getKind() == attr::MustTail; }
 };
 
 class NSConsumedAttr : public InheritableParamAttr {
@@ -5882,6 +6011,10 @@ public:
       }
       return Mask;
     }
+
+    bool hasCoverage() const {
+      return llvm::is_contained(sanitizers(), "coverage");
+    }
   
 
   static bool classof(const Attr *A) { return A->getKind() == attr::NoSanitize; }
@@ -6412,6 +6545,7 @@ public:
     void printPrettyPragma(raw_ostream &OS, const PrintingPolicy &Policy) const;
     static llvm::Optional<MapTypeTy>
     isDeclareTargetDeclaration(const ValueDecl *VD);
+    static llvm::Optional<OMPDeclareTargetDeclAttr*> getActiveAttr(const ValueDecl *VD);
     static llvm::Optional<DevTypeTy> getDeviceType(const ValueDecl *VD);
     static llvm::Optional<SourceLocation> getLocation(const ValueDecl *VD);
   
@@ -7866,7 +8000,7 @@ public:
   static bool classof(const Attr *A) { return A->getKind() == attr::OpenCLPrivateAddressSpace; }
 };
 
-class OpenCLUnrollHintAttr : public InheritableAttr {
+class OpenCLUnrollHintAttr : public StmtAttr {
 unsigned unrollHint;
 
 public:
@@ -7879,6 +8013,8 @@ public:
   // Constructors
   OpenCLUnrollHintAttr(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo
               , unsigned UnrollHint
+             );
+  OpenCLUnrollHintAttr(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo
              );
 
   OpenCLUnrollHintAttr *clone(ASTContext &C) const;
@@ -9111,6 +9247,35 @@ public:
   static bool classof(const Attr *A) { return A->getKind() == attr::Restrict; }
 };
 
+class RetainAttr : public InheritableAttr {
+public:
+  enum Spelling {
+    GNU_retain = 0,
+    CXX11_gnu_retain = 1,
+    C2x_gnu_retain = 2,
+  SpellingNotCalculated = 15
+
+  };
+
+  // Factory methods
+  static RetainAttr *CreateImplicit(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo = {SourceRange{}});
+  static RetainAttr *Create(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo);
+  static RetainAttr *CreateImplicit(ASTContext &Ctx, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+  static RetainAttr *Create(ASTContext &Ctx, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+
+  // Constructors
+  RetainAttr(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo
+             );
+
+  RetainAttr *clone(ASTContext &C) const;
+  void printPretty(raw_ostream &OS,
+                   const PrintingPolicy &Policy) const;
+  const char *getSpelling() const;
+
+
+  static bool classof(const Attr *A) { return A->getKind() == attr::Retain; }
+};
+
 class ReturnTypestateAttr : public InheritableAttr {
 public:
   enum ConsumedState {
@@ -9533,6 +9698,34 @@ public:
   static bool classof(const Attr *A) { return A->getKind() == attr::SpeculativeLoadHardening; }
 };
 
+class StandaloneDebugAttr : public InheritableAttr {
+public:
+  enum Spelling {
+    GNU_standalone_debug = 0,
+    CXX11_clang_standalone_debug = 1,
+  SpellingNotCalculated = 15
+
+  };
+
+  // Factory methods
+  static StandaloneDebugAttr *CreateImplicit(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo = {SourceRange{}});
+  static StandaloneDebugAttr *Create(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo);
+  static StandaloneDebugAttr *CreateImplicit(ASTContext &Ctx, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+  static StandaloneDebugAttr *Create(ASTContext &Ctx, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+
+  // Constructors
+  StandaloneDebugAttr(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo
+             );
+
+  StandaloneDebugAttr *clone(ASTContext &C) const;
+  void printPretty(raw_ostream &OS,
+                   const PrintingPolicy &Policy) const;
+  const char *getSpelling() const;
+
+
+  static bool classof(const Attr *A) { return A->getKind() == attr::StandaloneDebug; }
+};
+
 class StdCallAttr : public InheritableAttr {
 public:
   enum Spelling {
@@ -9671,6 +9864,91 @@ public:
 
 
   static bool classof(const Attr *A) { return A->getKind() == attr::SwiftAsync; }
+};
+
+class SwiftAsyncContextAttr : public ParameterABIAttr {
+public:
+  enum Spelling {
+    GNU_swift_async_context = 0,
+    CXX11_clang_swift_async_context = 1,
+    C2x_clang_swift_async_context = 2,
+  SpellingNotCalculated = 15
+
+  };
+
+  // Factory methods
+  static SwiftAsyncContextAttr *CreateImplicit(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo = {SourceRange{}});
+  static SwiftAsyncContextAttr *Create(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo);
+  static SwiftAsyncContextAttr *CreateImplicit(ASTContext &Ctx, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+  static SwiftAsyncContextAttr *Create(ASTContext &Ctx, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+
+  // Constructors
+  SwiftAsyncContextAttr(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo
+             );
+
+  SwiftAsyncContextAttr *clone(ASTContext &C) const;
+  void printPretty(raw_ostream &OS,
+                   const PrintingPolicy &Policy) const;
+  const char *getSpelling() const;
+
+
+  static bool classof(const Attr *A) { return A->getKind() == attr::SwiftAsyncContext; }
+};
+
+class SwiftAsyncErrorAttr : public InheritableAttr {
+public:
+  enum ConventionKind {
+    None,
+    NonNullError,
+    ZeroArgument,
+    NonZeroArgument
+  };
+private:
+  ConventionKind convention;
+
+unsigned handlerParamIdx;
+
+public:
+  enum Spelling {
+    GNU_swift_async_error = 0,
+    CXX11_clang_swift_async_error = 1,
+    C2x_clang_swift_async_error = 2,
+  SpellingNotCalculated = 15
+
+  };
+
+  // Factory methods
+  static SwiftAsyncErrorAttr *CreateImplicit(ASTContext &Ctx, ConventionKind Convention, unsigned HandlerParamIdx, const AttributeCommonInfo &CommonInfo = {SourceRange{}});
+  static SwiftAsyncErrorAttr *Create(ASTContext &Ctx, ConventionKind Convention, unsigned HandlerParamIdx, const AttributeCommonInfo &CommonInfo);
+  static SwiftAsyncErrorAttr *CreateImplicit(ASTContext &Ctx, ConventionKind Convention, unsigned HandlerParamIdx, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+  static SwiftAsyncErrorAttr *Create(ASTContext &Ctx, ConventionKind Convention, unsigned HandlerParamIdx, SourceRange Range, AttributeCommonInfo::Syntax Syntax);
+
+  // Constructors
+  SwiftAsyncErrorAttr(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo
+              , ConventionKind Convention
+              , unsigned HandlerParamIdx
+             );
+  SwiftAsyncErrorAttr(ASTContext &Ctx, const AttributeCommonInfo &CommonInfo
+              , ConventionKind Convention
+             );
+
+  SwiftAsyncErrorAttr *clone(ASTContext &C) const;
+  void printPretty(raw_ostream &OS,
+                   const PrintingPolicy &Policy) const;
+  const char *getSpelling() const;
+  ConventionKind getConvention() const {
+    return convention;
+  }
+
+  static bool ConvertStrToConventionKind(StringRef Val, ConventionKind &Out);
+  static const char *ConvertConventionKindToStr(ConventionKind Val);
+  unsigned getHandlerParamIdx() const {
+    return handlerParamIdx;
+  }
+
+
+
+  static bool classof(const Attr *A) { return A->getKind() == attr::SwiftAsyncError; }
 };
 
 class SwiftAsyncNameAttr : public InheritableAttr {
