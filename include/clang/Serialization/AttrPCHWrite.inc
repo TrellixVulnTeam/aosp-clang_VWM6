@@ -1289,6 +1289,13 @@ Record.push_back(SA->getInterrupt());
     Record.push_back(A->isPackExpansion());
     break;
   }
+  case attr::NoProfileFunction: {
+    const auto *SA = cast<NoProfileFunctionAttr>(A);
+    Record.push_back(SA->isInherited());
+    Record.push_back(A->isImplicit());
+    Record.push_back(A->isPackExpansion());
+    break;
+  }
   case attr::NoReturn: {
     const auto *SA = cast<NoReturnAttr>(A);
     Record.push_back(SA->isInherited());
@@ -2130,6 +2137,13 @@ Record.push_back(SA->getKind());
     Record.push_back(SA->getCompletionHandlerIndex().serialize());
     break;
   }
+  case attr::SwiftAsyncCall: {
+    const auto *SA = cast<SwiftAsyncCallAttr>(A);
+    Record.push_back(SA->isInherited());
+    Record.push_back(A->isImplicit());
+    Record.push_back(A->isPackExpansion());
+    break;
+  }
   case attr::SwiftAsyncContext: {
     const auto *SA = cast<SwiftAsyncContextAttr>(A);
     Record.push_back(SA->isInherited());
@@ -2391,6 +2405,13 @@ Record.push_back(SA->getImplicitReason());
   }
   case attr::Used: {
     const auto *SA = cast<UsedAttr>(A);
+    Record.push_back(SA->isInherited());
+    Record.push_back(A->isImplicit());
+    Record.push_back(A->isPackExpansion());
+    break;
+  }
+  case attr::UsingIfExists: {
+    const auto *SA = cast<UsingIfExistsAttr>(A);
     Record.push_back(SA->isInherited());
     Record.push_back(A->isImplicit());
     Record.push_back(A->isPackExpansion());

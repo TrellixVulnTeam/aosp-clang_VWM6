@@ -371,7 +371,13 @@ STMT_RANGE(OMPLoopDirective, OMPDistributeDirective, OMPTeamsDistributeSimdDirec
 OMPTILEDIRECTIVE(OMPTileDirective, OMPLoopBasedDirective)
 #undef OMPTILEDIRECTIVE
 
-STMT_RANGE(OMPLoopBasedDirective, OMPDistributeDirective, OMPTileDirective)
+#ifndef OMPUNROLLDIRECTIVE
+#  define OMPUNROLLDIRECTIVE(Type, Base) OMPLOOPBASEDDIRECTIVE(Type, Base)
+#endif
+OMPUNROLLDIRECTIVE(OMPUnrollDirective, OMPLoopBasedDirective)
+#undef OMPUNROLLDIRECTIVE
+
+STMT_RANGE(OMPLoopBasedDirective, OMPDistributeDirective, OMPUnrollDirective)
 
 #undef OMPLOOPBASEDDIRECTIVE
 

@@ -11,6 +11,7 @@
     addressofreturnaddress,                    // llvm.addressofreturnaddress
     adjust_trampoline,                         // llvm.adjust.trampoline
     annotation,                                // llvm.annotation
+    arithmetic_fence,                          // llvm.arithmetic.fence
     assume,                                    // llvm.assume
     bitreverse,                                // llvm.bitreverse
     bswap,                                     // llvm.bswap
@@ -322,12 +323,21 @@
     vp_add,                                    // llvm.vp.add
     vp_and,                                    // llvm.vp.and
     vp_ashr,                                   // llvm.vp.ashr
+    vp_fadd,                                   // llvm.vp.fadd
+    vp_fdiv,                                   // llvm.vp.fdiv
+    vp_fmul,                                   // llvm.vp.fmul
+    vp_frem,                                   // llvm.vp.frem
+    vp_fsub,                                   // llvm.vp.fsub
+    vp_gather,                                 // llvm.vp.gather
+    vp_load,                                   // llvm.vp.load
     vp_lshr,                                   // llvm.vp.lshr
     vp_mul,                                    // llvm.vp.mul
     vp_or,                                     // llvm.vp.or
+    vp_scatter,                                // llvm.vp.scatter
     vp_sdiv,                                   // llvm.vp.sdiv
     vp_shl,                                    // llvm.vp.shl
     vp_srem,                                   // llvm.vp.srem
+    vp_store,                                  // llvm.vp.store
     vp_sub,                                    // llvm.vp.sub
     vp_udiv,                                   // llvm.vp.udiv
     vp_urem,                                   // llvm.vp.urem
@@ -336,4 +346,4 @@
     write_register,                            // llvm.write_register
     xray_customevent,                          // llvm.xray.customevent
     xray_typedevent,                           // llvm.xray.typedevent
-    num_intrinsics = 10107
+    num_intrinsics = 10330

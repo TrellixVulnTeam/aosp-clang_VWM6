@@ -680,6 +680,10 @@
   bool VisitNoMips16Attr(NoMips16Attr *A) {
     return true; 
   }
+  bool TraverseNoProfileFunctionAttr(NoProfileFunctionAttr *A);
+  bool VisitNoProfileFunctionAttr(NoProfileFunctionAttr *A) {
+    return true; 
+  }
   bool TraverseNoReturnAttr(NoReturnAttr *A);
   bool VisitNoReturnAttr(NoReturnAttr *A) {
     return true; 
@@ -1140,6 +1144,10 @@
   bool VisitSwiftAsyncAttr(SwiftAsyncAttr *A) {
     return true; 
   }
+  bool TraverseSwiftAsyncCallAttr(SwiftAsyncCallAttr *A);
+  bool VisitSwiftAsyncCallAttr(SwiftAsyncCallAttr *A) {
+    return true; 
+  }
   bool TraverseSwiftAsyncContextAttr(SwiftAsyncContextAttr *A);
   bool VisitSwiftAsyncContextAttr(SwiftAsyncContextAttr *A) {
     return true; 
@@ -1286,6 +1294,10 @@
   }
   bool TraverseUsedAttr(UsedAttr *A);
   bool VisitUsedAttr(UsedAttr *A) {
+    return true; 
+  }
+  bool TraverseUsingIfExistsAttr(UsingIfExistsAttr *A);
+  bool VisitUsingIfExistsAttr(UsingIfExistsAttr *A) {
     return true; 
   }
   bool TraverseUuidAttr(UuidAttr *A);
@@ -2984,6 +2996,15 @@ bool VISITORCLASS<Derived>::TraverseNoMips16Attr(NoMips16Attr *A) {
 }
 
 template <typename Derived>
+bool VISITORCLASS<Derived>::TraverseNoProfileFunctionAttr(NoProfileFunctionAttr *A) {
+  if (!getDerived().VisitAttr(A))
+    return false;
+  if (!getDerived().VisitNoProfileFunctionAttr(A))
+    return false;
+  return true;
+}
+
+template <typename Derived>
 bool VISITORCLASS<Derived>::TraverseNoReturnAttr(NoReturnAttr *A) {
   if (!getDerived().VisitAttr(A))
     return false;
@@ -4104,6 +4125,15 @@ bool VISITORCLASS<Derived>::TraverseSwiftAsyncAttr(SwiftAsyncAttr *A) {
 }
 
 template <typename Derived>
+bool VISITORCLASS<Derived>::TraverseSwiftAsyncCallAttr(SwiftAsyncCallAttr *A) {
+  if (!getDerived().VisitAttr(A))
+    return false;
+  if (!getDerived().VisitSwiftAsyncCallAttr(A))
+    return false;
+  return true;
+}
+
+template <typename Derived>
 bool VISITORCLASS<Derived>::TraverseSwiftAsyncContextAttr(SwiftAsyncContextAttr *A) {
   if (!getDerived().VisitAttr(A))
     return false;
@@ -4445,6 +4475,15 @@ bool VISITORCLASS<Derived>::TraverseUsedAttr(UsedAttr *A) {
   if (!getDerived().VisitAttr(A))
     return false;
   if (!getDerived().VisitUsedAttr(A))
+    return false;
+  return true;
+}
+
+template <typename Derived>
+bool VISITORCLASS<Derived>::TraverseUsingIfExistsAttr(UsingIfExistsAttr *A) {
+  if (!getDerived().VisitAttr(A))
+    return false;
+  if (!getDerived().VisitUsingIfExistsAttr(A))
     return false;
   return true;
 }
@@ -4947,6 +4986,8 @@ bool VISITORCLASS<Derived>::TraverseAttr(Attr *A) {
       return getDerived().TraverseNoMicroMipsAttr(cast<NoMicroMipsAttr>(A));
     case attr::NoMips16:
       return getDerived().TraverseNoMips16Attr(cast<NoMips16Attr>(A));
+    case attr::NoProfileFunction:
+      return getDerived().TraverseNoProfileFunctionAttr(cast<NoProfileFunctionAttr>(A));
     case attr::NoReturn:
       return getDerived().TraverseNoReturnAttr(cast<NoReturnAttr>(A));
     case attr::NoSanitize:
@@ -5177,6 +5218,8 @@ bool VISITORCLASS<Derived>::TraverseAttr(Attr *A) {
       return getDerived().TraverseSuppressAttr(cast<SuppressAttr>(A));
     case attr::SwiftAsync:
       return getDerived().TraverseSwiftAsyncAttr(cast<SwiftAsyncAttr>(A));
+    case attr::SwiftAsyncCall:
+      return getDerived().TraverseSwiftAsyncCallAttr(cast<SwiftAsyncCallAttr>(A));
     case attr::SwiftAsyncContext:
       return getDerived().TraverseSwiftAsyncContextAttr(cast<SwiftAsyncContextAttr>(A));
     case attr::SwiftAsyncError:
@@ -5251,6 +5294,8 @@ bool VISITORCLASS<Derived>::TraverseAttr(Attr *A) {
       return getDerived().TraverseUseHandleAttr(cast<UseHandleAttr>(A));
     case attr::Used:
       return getDerived().TraverseUsedAttr(cast<UsedAttr>(A));
+    case attr::UsingIfExists:
+      return getDerived().TraverseUsingIfExistsAttr(cast<UsingIfExistsAttr>(A));
     case attr::Uuid:
       return getDerived().TraverseUuidAttr(cast<UuidAttr>(A));
     case attr::VecReturn:

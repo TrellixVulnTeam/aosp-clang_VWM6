@@ -924,17 +924,6 @@ set_target_properties(LTO PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS LTO )
 list(APPEND _IMPORT_CHECK_FILES_FOR_LTO "${_IMPORT_PREFIX}/lib64/libLTO.so.13git" )
 
-# Import target "LLVMgold" for configuration "Release"
-set_property(TARGET LLVMgold APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(LLVMgold PROPERTIES
-  IMPORTED_COMMON_LANGUAGE_RUNTIME_RELEASE ""
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib64/LLVMgold.so"
-  IMPORTED_NO_SONAME_RELEASE "TRUE"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS LLVMgold )
-list(APPEND _IMPORT_CHECK_FILES_FOR_LLVMgold "${_IMPORT_PREFIX}/lib64/LLVMgold.so" )
-
 # Import target "llvm-ar" for configuration "Release"
 set_property(TARGET llvm-ar APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(llvm-ar PROPERTIES
@@ -1142,15 +1131,6 @@ set_target_properties(llvm-dwp PROPERTIES
 
 list(APPEND _IMPORT_CHECK_TARGETS llvm-dwp )
 list(APPEND _IMPORT_CHECK_FILES_FOR_llvm-dwp "${_IMPORT_PREFIX}/bin/llvm-dwp" )
-
-# Import target "llvm-elfabi" for configuration "Release"
-set_property(TARGET llvm-elfabi APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(llvm-elfabi PROPERTIES
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/bin/llvm-elfabi"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS llvm-elfabi )
-list(APPEND _IMPORT_CHECK_FILES_FOR_llvm-elfabi "${_IMPORT_PREFIX}/bin/llvm-elfabi" )
 
 # Import target "llvm-exegesis" for configuration "Release"
 set_property(TARGET llvm-exegesis APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
@@ -1408,6 +1388,15 @@ set_target_properties(LLVM PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS LLVM )
 list(APPEND _IMPORT_CHECK_FILES_FOR_LLVM "${_IMPORT_PREFIX}/lib64/libLLVM-13git.so" )
 
+# Import target "llvm-sim" for configuration "Release"
+set_property(TARGET llvm-sim APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(llvm-sim PROPERTIES
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/bin/llvm-sim"
+  )
+
+list(APPEND _IMPORT_CHECK_TARGETS llvm-sim )
+list(APPEND _IMPORT_CHECK_FILES_FOR_llvm-sim "${_IMPORT_PREFIX}/bin/llvm-sim" )
+
 # Import target "llvm-size" for configuration "Release"
 set_property(TARGET llvm-size APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(llvm-size PROPERTIES
@@ -1452,6 +1441,15 @@ set_target_properties(llvm-symbolizer PROPERTIES
 
 list(APPEND _IMPORT_CHECK_TARGETS llvm-symbolizer )
 list(APPEND _IMPORT_CHECK_FILES_FOR_llvm-symbolizer "${_IMPORT_PREFIX}/bin/llvm-symbolizer" )
+
+# Import target "llvm-tapi-diff" for configuration "Release"
+set_property(TARGET llvm-tapi-diff APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(llvm-tapi-diff PROPERTIES
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/bin/llvm-tapi-diff"
+  )
+
+list(APPEND _IMPORT_CHECK_TARGETS llvm-tapi-diff )
+list(APPEND _IMPORT_CHECK_FILES_FOR_llvm-tapi-diff "${_IMPORT_PREFIX}/bin/llvm-tapi-diff" )
 
 # Import target "llvm-undname" for configuration "Release"
 set_property(TARGET llvm-undname APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
