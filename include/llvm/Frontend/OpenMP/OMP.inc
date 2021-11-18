@@ -6549,9 +6549,9 @@ bool llvm::omp::isAllowedClauseForDirective(Directive D, Clause C, unsigned Vers
     case OMPD_taskgroup:
       switch (C) {
         case OMPC_task_reduction:
-          return 1 <= Version && 2147483647 >= Version;
+          return 50 <= Version && 2147483647 >= Version;
         case OMPC_allocate:
-          return 1 <= Version && 2147483647 >= Version;
+          return 50 <= Version && 2147483647 >= Version;
         default:
           return false;
       }

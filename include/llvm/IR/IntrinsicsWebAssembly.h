@@ -13,7 +13,7 @@ namespace llvm {
 namespace Intrinsic {
 enum WASMIntrinsics : unsigned {
 // Enum values for intrinsics
-    wasm_alltrue = 9025,                              // llvm.wasm.alltrue
+    wasm_alltrue = 9071,                              // llvm.wasm.alltrue
     wasm_anytrue,                              // llvm.wasm.anytrue
     wasm_avgr_unsigned,                        // llvm.wasm.avgr.unsigned
     wasm_bitmask,                              // llvm.wasm.bitmask
@@ -22,10 +22,6 @@ enum WASMIntrinsics : unsigned {
     wasm_dot,                                  // llvm.wasm.dot
     wasm_extadd_pairwise_signed,               // llvm.wasm.extadd.pairwise.signed
     wasm_extadd_pairwise_unsigned,             // llvm.wasm.extadd.pairwise.unsigned
-    wasm_extmul_high_signed,                   // llvm.wasm.extmul.high.signed
-    wasm_extmul_high_unsigned,                 // llvm.wasm.extmul.high.unsigned
-    wasm_extmul_low_signed,                    // llvm.wasm.extmul.low.signed
-    wasm_extmul_low_unsigned,                  // llvm.wasm.extmul.low.unsigned
     wasm_get_ehselector,                       // llvm.wasm.get.ehselector
     wasm_get_exception,                        // llvm.wasm.get.exception
     wasm_landingpad_index,                     // llvm.wasm.landingpad.index

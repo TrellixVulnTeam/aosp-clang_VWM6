@@ -121,6 +121,10 @@
     OS << " \"" << SA->getReplacement() << "\"";
     OS << " " << SA->getPriority();
   }
+  void VisitBTFTagAttr(const BTFTagAttr *A) {
+    const auto *SA = cast<BTFTagAttr>(A); (void)SA;
+    OS << " \"" << SA->getBTFTag() << "\"";
+  }
   void VisitBlocksAttr(const BlocksAttr *A) {
     const auto *SA = cast<BlocksAttr>(A); (void)SA;
     switch(SA->getType()) {
@@ -255,6 +259,11 @@
       OS << " Open";
       break;
     }
+  }
+  void VisitErrorAttr(const ErrorAttr *A) {
+    const auto *SA = cast<ErrorAttr>(A); (void)SA;
+    OS << " " << A->getSpelling();
+    OS << " \"" << SA->getUserDiagnostic() << "\"";
   }
   void VisitExternalSourceSymbolAttr(const ExternalSourceSymbolAttr *A) {
     const auto *SA = cast<ExternalSourceSymbolAttr>(A); (void)SA;

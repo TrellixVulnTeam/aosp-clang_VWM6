@@ -8,7 +8,7 @@ clang-tidy.real
 lld
 ld64.lld
 ld.lld
-../lib64/clang/13.0.2/share
-../lib64/clang/13.0.2/lib/linux
-../lib64/clang/13.0.2/include
+../lib64/clang/14.0.0/share
+../lib64/clang/14.0.0/lib/linux
+../lib64/clang/14.0.0/include
 ../lib64/libxml2.so.2.9.12
