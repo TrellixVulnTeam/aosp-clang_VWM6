@@ -1,8 +1,9 @@
 //===- ModuleDepCollector.h - Callbacks to collect deps ---------*- C++ -*-===//
 //
-// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
-// See https://llvm.org/LICENSE.txt for license information.
-// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//                     The LLVM Compiler Infrastructure
+//
+// This file is distributed under the University of Illinois Open Source
+// License. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
 
@@ -172,11 +173,7 @@ private:
 
   /// Adds direct modular dependencies that have already been built to the
   /// ModuleDeps instance.
-  void
-  addAllSubmodulePrebuiltDeps(const Module *M, ModuleDeps &MD,
-                              llvm::DenseSet<const Module *> &SeenSubmodules);
-  void addModulePrebuiltDeps(const Module *M, ModuleDeps &MD,
-                             llvm::DenseSet<const Module *> &SeenSubmodules);
+  void addDirectPrebuiltModuleDeps(const Module *M, ModuleDeps &MD);
 
   /// Traverses the previously collected direct modular dependencies to discover
   /// transitive modular dependencies and fills the parent \c ModuleDepCollector

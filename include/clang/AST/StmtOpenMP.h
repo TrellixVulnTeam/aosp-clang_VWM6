@@ -2794,25 +2794,16 @@ class OMPAtomicDirective : public OMPExecutableDirective {
       : OMPExecutableDirective(OMPAtomicDirectiveClass, llvm::omp::OMPD_atomic,
                                SourceLocation(), SourceLocation()) {}
 
-  enum DataPositionTy : size_t {
-    POS_X = 0,
-    POS_V,
-    POS_E,
-    POS_UpdateExpr,
-  };
-
   /// Set 'x' part of the associated expression/statement.
-  void setX(Expr *X) { Data->getChildren()[DataPositionTy::POS_X] = X; }
+  void setX(Expr *X) { Data->getChildren()[0] = X; }
   /// Set helper expression of the form
   /// 'OpaqueValueExpr(x) binop OpaqueValueExpr(expr)' or
   /// 'OpaqueValueExpr(expr) binop OpaqueValueExpr(x)'.
-  void setUpdateExpr(Expr *UE) {
-    Data->getChildren()[DataPositionTy::POS_UpdateExpr] = UE;
-  }
+  void setUpdateExpr(Expr *UE) { Data->getChildren()[1] = UE; }
   /// Set 'v' part of the associated expression/statement.
-  void setV(Expr *V) { Data->getChildren()[DataPositionTy::POS_V] = V; }
+  void setV(Expr *V) { Data->getChildren()[2] = V; }
   /// Set 'expr' part of the associated expression/statement.
-  void setExpr(Expr *E) { Data->getChildren()[DataPositionTy::POS_E] = E; }
+  void setExpr(Expr *E) { Data->getChildren()[3] = E; }
 
 public:
   /// Creates directive with a list of \a Clauses and 'x', 'v' and 'expr'
@@ -2849,22 +2840,16 @@ public:
                                          unsigned NumClauses, EmptyShell);
 
   /// Get 'x' part of the associated expression/statement.
-  Expr *getX() {
-    return cast_or_null<Expr>(Data->getChildren()[DataPositionTy::POS_X]);
-  }
+  Expr *getX() { return cast_or_null<Expr>(Data->getChildren()[0]); }
   const Expr *getX() const {
-    return cast_or_null<Expr>(Data->getChildren()[DataPositionTy::POS_X]);
+    return cast_or_null<Expr>(Data->getChildren()[0]);
   }
   /// Get helper expression of the form
   /// 'OpaqueValueExpr(x) binop OpaqueValueExpr(expr)' or
   /// 'OpaqueValueExpr(expr) binop OpaqueValueExpr(x)'.
-  Expr *getUpdateExpr() {
-    return cast_or_null<Expr>(
-        Data->getChildren()[DataPositionTy::POS_UpdateExpr]);
-  }
+  Expr *getUpdateExpr() { return cast_or_null<Expr>(Data->getChildren()[1]); }
   const Expr *getUpdateExpr() const {
-    return cast_or_null<Expr>(
-        Data->getChildren()[DataPositionTy::POS_UpdateExpr]);
+    return cast_or_null<Expr>(Data->getChildren()[1]);
   }
   /// Return true if helper update expression has form
   /// 'OpaqueValueExpr(x) binop OpaqueValueExpr(expr)' and false if it has form
@@ -2874,18 +2859,14 @@ public:
   /// 'x', false if 'v' must be updated to the new value of 'x'.
   bool isPostfixUpdate() const { return IsPostfixUpdate; }
   /// Get 'v' part of the associated expression/statement.
-  Expr *getV() {
-    return cast_or_null<Expr>(Data->getChildren()[DataPositionTy::POS_V]);
-  }
+  Expr *getV() { return cast_or_null<Expr>(Data->getChildren()[2]); }
   const Expr *getV() const {
-    return cast_or_null<Expr>(Data->getChildren()[DataPositionTy::POS_V]);
+    return cast_or_null<Expr>(Data->getChildren()[2]);
   }
   /// Get 'expr' part of the associated expression/statement.
-  Expr *getExpr() {
-    return cast_or_null<Expr>(Data->getChildren()[DataPositionTy::POS_E]);
-  }
+  Expr *getExpr() { return cast_or_null<Expr>(Data->getChildren()[3]); }
   const Expr *getExpr() const {
-    return cast_or_null<Expr>(Data->getChildren()[DataPositionTy::POS_E]);
+    return cast_or_null<Expr>(Data->getChildren()[3]);
   }
 
   static bool classof(const Stmt *T) {

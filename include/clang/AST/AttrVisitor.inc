@@ -172,10 +172,6 @@
   bool VisitBPFPreserveAccessIndexAttr(BPFPreserveAccessIndexAttr *A) {
     return true; 
   }
-  bool TraverseBTFTagAttr(BTFTagAttr *A);
-  bool VisitBTFTagAttr(BTFTagAttr *A) {
-    return true; 
-  }
   bool TraverseBlocksAttr(BlocksAttr *A);
   bool VisitBlocksAttr(BlocksAttr *A) {
     return true; 
@@ -372,10 +368,6 @@
   bool VisitDiagnoseIfAttr(DiagnoseIfAttr *A) {
     return true; 
   }
-  bool TraverseDisableSanitizerInstrumentationAttr(DisableSanitizerInstrumentationAttr *A);
-  bool VisitDisableSanitizerInstrumentationAttr(DisableSanitizerInstrumentationAttr *A) {
-    return true; 
-  }
   bool TraverseDisableTailCallsAttr(DisableTailCallsAttr *A);
   bool VisitDisableTailCallsAttr(DisableTailCallsAttr *A) {
     return true; 
@@ -398,10 +390,6 @@
   }
   bool TraverseEnumExtensibilityAttr(EnumExtensibilityAttr *A);
   bool VisitEnumExtensibilityAttr(EnumExtensibilityAttr *A) {
-    return true; 
-  }
-  bool TraverseErrorAttr(ErrorAttr *A);
-  bool VisitErrorAttr(ErrorAttr *A) {
     return true; 
   }
   bool TraverseExcludeFromExplicitInstantiationAttr(ExcludeFromExplicitInstantiationAttr *A);
@@ -1830,15 +1818,6 @@ bool VISITORCLASS<Derived>::TraverseBPFPreserveAccessIndexAttr(BPFPreserveAccess
 }
 
 template <typename Derived>
-bool VISITORCLASS<Derived>::TraverseBTFTagAttr(BTFTagAttr *A) {
-  if (!getDerived().VisitAttr(A))
-    return false;
-  if (!getDerived().VisitBTFTagAttr(A))
-    return false;
-  return true;
-}
-
-template <typename Derived>
 bool VISITORCLASS<Derived>::TraverseBlocksAttr(BlocksAttr *A) {
   if (!getDerived().VisitAttr(A))
     return false;
@@ -2286,15 +2265,6 @@ bool VISITORCLASS<Derived>::TraverseDiagnoseIfAttr(DiagnoseIfAttr *A) {
 }
 
 template <typename Derived>
-bool VISITORCLASS<Derived>::TraverseDisableSanitizerInstrumentationAttr(DisableSanitizerInstrumentationAttr *A) {
-  if (!getDerived().VisitAttr(A))
-    return false;
-  if (!getDerived().VisitDisableSanitizerInstrumentationAttr(A))
-    return false;
-  return true;
-}
-
-template <typename Derived>
 bool VISITORCLASS<Derived>::TraverseDisableTailCallsAttr(DisableTailCallsAttr *A) {
   if (!getDerived().VisitAttr(A))
     return false;
@@ -2346,15 +2316,6 @@ bool VISITORCLASS<Derived>::TraverseEnumExtensibilityAttr(EnumExtensibilityAttr 
   if (!getDerived().VisitAttr(A))
     return false;
   if (!getDerived().VisitEnumExtensibilityAttr(A))
-    return false;
-  return true;
-}
-
-template <typename Derived>
-bool VISITORCLASS<Derived>::TraverseErrorAttr(ErrorAttr *A) {
-  if (!getDerived().VisitAttr(A))
-    return false;
-  if (!getDerived().VisitErrorAttr(A))
     return false;
   return true;
 }
@@ -4771,8 +4732,6 @@ bool VISITORCLASS<Derived>::TraverseAttr(Attr *A) {
       return getDerived().TraverseAvailabilityAttr(cast<AvailabilityAttr>(A));
     case attr::BPFPreserveAccessIndex:
       return getDerived().TraverseBPFPreserveAccessIndexAttr(cast<BPFPreserveAccessIndexAttr>(A));
-    case attr::BTFTag:
-      return getDerived().TraverseBTFTagAttr(cast<BTFTagAttr>(A));
     case attr::Blocks:
       return getDerived().TraverseBlocksAttr(cast<BlocksAttr>(A));
     case attr::BuiltinAlias:
@@ -4871,8 +4830,6 @@ bool VISITORCLASS<Derived>::TraverseAttr(Attr *A) {
       return getDerived().TraverseDestructorAttr(cast<DestructorAttr>(A));
     case attr::DiagnoseIf:
       return getDerived().TraverseDiagnoseIfAttr(cast<DiagnoseIfAttr>(A));
-    case attr::DisableSanitizerInstrumentation:
-      return getDerived().TraverseDisableSanitizerInstrumentationAttr(cast<DisableSanitizerInstrumentationAttr>(A));
     case attr::DisableTailCalls:
       return getDerived().TraverseDisableTailCallsAttr(cast<DisableTailCallsAttr>(A));
     case attr::EmptyBases:
@@ -4885,8 +4842,6 @@ bool VISITORCLASS<Derived>::TraverseAttr(Attr *A) {
       return getDerived().TraverseEnforceTCBLeafAttr(cast<EnforceTCBLeafAttr>(A));
     case attr::EnumExtensibility:
       return getDerived().TraverseEnumExtensibilityAttr(cast<EnumExtensibilityAttr>(A));
-    case attr::Error:
-      return getDerived().TraverseErrorAttr(cast<ErrorAttr>(A));
     case attr::ExcludeFromExplicitInstantiation:
       return getDerived().TraverseExcludeFromExplicitInstantiationAttr(cast<ExcludeFromExplicitInstantiationAttr>(A));
     case attr::ExclusiveTrylockFunction:

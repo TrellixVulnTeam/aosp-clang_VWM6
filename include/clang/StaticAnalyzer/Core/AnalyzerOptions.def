@@ -190,13 +190,7 @@ ANALYZER_OPTION(bool, ShouldReportIssuesInMainSourceFile,
                 false)
 
 ANALYZER_OPTION(bool, ShouldWriteStableReportFilename, "stable-report-filename",
-                "Deprecated: report filenames are now always stable. "
-                "See also 'verbose-report-filename'.",
-                false)
-
-ANALYZER_OPTION(bool, ShouldWriteVerboseReportFilename, "verbose-report-filename",
-                "Whether or not the report filename should contain extra "
-                "information about the issue.",
+                "Whether or not the report filename should be random or not.",
                 false)
 
 ANALYZER_OPTION(

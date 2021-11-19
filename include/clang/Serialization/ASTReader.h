@@ -1162,10 +1162,6 @@ private:
   /// definitions. Only populated when using modules in C++.
   llvm::DenseMap<EnumDecl *, EnumDecl *> EnumDefinitions;
 
-  /// A mapping from canonical declarations of records to their canonical
-  /// definitions. Doesn't cover CXXRecordDecl.
-  llvm::DenseMap<RecordDecl *, RecordDecl *> RecordDefinitions;
-
   /// When reading a Stmt tree, Stmt operands are placed in this stack.
   SmallVector<Stmt *, 16> StmtStack;
 
@@ -1324,18 +1320,18 @@ private:
                                ASTReaderListener *Listener,
                                bool ValidateDiagnosticOptions);
 
-  llvm::Error ReadASTBlock(ModuleFile &F, unsigned ClientLoadCapabilities);
-  llvm::Error ReadExtensionBlock(ModuleFile &F);
+  ASTReadResult ReadASTBlock(ModuleFile &F, unsigned ClientLoadCapabilities);
+  ASTReadResult ReadExtensionBlock(ModuleFile &F);
   void ReadModuleOffsetMap(ModuleFile &F) const;
-  void ParseLineTable(ModuleFile &F, const RecordData &Record);
-  llvm::Error ReadSourceManagerBlock(ModuleFile &F);
+  bool ParseLineTable(ModuleFile &F, const RecordData &Record);
+  bool ReadSourceManagerBlock(ModuleFile &F);
   llvm::BitstreamCursor &SLocCursorForID(int ID);
   SourceLocation getImportLocation(ModuleFile *F);
   ASTReadResult ReadModuleMapFileBlock(RecordData &Record, ModuleFile &F,
                                        const ModuleFile *ImportedBy,
                                        unsigned ClientLoadCapabilities);
-  llvm::Error ReadSubmoduleBlock(ModuleFile &F,
-                                 unsigned ClientLoadCapabilities);
+  ASTReadResult ReadSubmoduleBlock(ModuleFile &F,
+                                   unsigned ClientLoadCapabilities);
   static bool ParseLanguageOptions(const RecordData &Record, bool Complain,
                                    ASTReaderListener &Listener,
                                    bool AllowCompatibleDifferences);
@@ -1908,9 +1904,8 @@ public:
   /// ReadBlockAbbrevs - Enter a subblock of the specified BlockID with the
   /// specified cursor.  Read the abbreviations that are at the top of the block
   /// and then leave the cursor pointing into the block.
-  static llvm::Error ReadBlockAbbrevs(llvm::BitstreamCursor &Cursor,
-                                      unsigned BlockID,
-                                      uint64_t *StartOfBlockOffset = nullptr);
+  static bool ReadBlockAbbrevs(llvm::BitstreamCursor &Cursor, unsigned BlockID,
+                               uint64_t *StartOfBlockOffset = nullptr);
 
   /// Finds all the visible declarations with a given name.
   /// The current implementation of this method just loads the entire

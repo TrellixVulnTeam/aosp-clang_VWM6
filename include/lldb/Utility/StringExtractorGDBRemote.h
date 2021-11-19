@@ -168,8 +168,7 @@ public:
     eServerPacketType_jLLDBTraceGetState,
     eServerPacketType_jLLDBTraceGetBinaryData,
 
-    eServerPacketType_qMemTags, // read memory tags
-    eServerPacketType_QMemTags, // write memory tags
+    eServerPacketType_qMemTags,
   };
 
   ServerPacketType GetServerPacketType() const;

@@ -351,7 +351,7 @@ public:
   }
 
   void setConstrainedFPCallAttr(CallBase *I) {
-    I->addFnAttr(Attribute::StrictFP);
+    I->addAttribute(AttributeList::FunctionIndex, Attribute::StrictFP);
   }
 
   void setDefaultOperandBundles(ArrayRef<OperandBundleDef> OpBundles) {
@@ -697,16 +697,12 @@ public:
       MDNode *TBAAStructTag = nullptr, MDNode *ScopeTag = nullptr,
       MDNode *NoAliasTag = nullptr);
 
-  /// Create a sequential vector fadd reduction intrinsic of the source vector.
-  /// The first parameter is a scalar accumulator value. An unordered reduction
-  /// can be created by adding the reassoc fast-math flag to the resulting
-  /// sequential reduction.
+  /// Create a vector fadd reduction intrinsic of the source vector.
+  /// The first parameter is a scalar accumulator value for ordered reductions.
   CallInst *CreateFAddReduce(Value *Acc, Value *Src);
 
-  /// Create a sequential vector fmul reduction intrinsic of the source vector.
-  /// The first parameter is a scalar accumulator value. An unordered reduction
-  /// can be created by adding the reassoc fast-math flag to the resulting
-  /// sequential reduction.
+  /// Create a vector fmul reduction intrinsic of the source vector.
+  /// The first parameter is a scalar accumulator value for ordered reductions.
   CallInst *CreateFMulReduce(Value *Acc, Value *Src);
 
   /// Create a vector int add reduction intrinsic of the source vector.

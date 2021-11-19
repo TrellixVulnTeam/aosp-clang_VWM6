@@ -351,14 +351,6 @@ Record.push_back(SA->getInterrupt());
     Record.push_back(A->isPackExpansion());
     break;
   }
-  case attr::BTFTag: {
-    const auto *SA = cast<BTFTagAttr>(A);
-    Record.push_back(SA->isInherited());
-    Record.push_back(A->isImplicit());
-    Record.push_back(A->isPackExpansion());
-    Record.AddString(SA->getBTFTag());
-    break;
-  }
   case attr::Blocks: {
     const auto *SA = cast<BlocksAttr>(A);
     Record.push_back(SA->isInherited());
@@ -727,13 +719,6 @@ Record.push_back(SA->getDiagnosticType());
     Record.AddDeclRef(SA->getParent());
     break;
   }
-  case attr::DisableSanitizerInstrumentation: {
-    const auto *SA = cast<DisableSanitizerInstrumentationAttr>(A);
-    Record.push_back(SA->isInherited());
-    Record.push_back(A->isImplicit());
-    Record.push_back(A->isPackExpansion());
-    break;
-  }
   case attr::DisableTailCalls: {
     const auto *SA = cast<DisableTailCallsAttr>(A);
     Record.push_back(SA->isInherited());
@@ -779,14 +764,6 @@ Record.push_back(SA->getDiagnosticType());
     Record.push_back(A->isImplicit());
     Record.push_back(A->isPackExpansion());
 Record.push_back(SA->getExtensibility());
-    break;
-  }
-  case attr::Error: {
-    const auto *SA = cast<ErrorAttr>(A);
-    Record.push_back(SA->isInherited());
-    Record.push_back(A->isImplicit());
-    Record.push_back(A->isPackExpansion());
-    Record.AddString(SA->getUserDiagnostic());
     break;
   }
   case attr::ExcludeFromExplicitInstantiation: {

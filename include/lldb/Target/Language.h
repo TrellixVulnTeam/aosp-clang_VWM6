@@ -243,14 +243,6 @@ public:
                                       FunctionNameRepresentation representation,
                                       Stream &s);
 
-  virtual ConstString
-  GetDemangledFunctionNameWithoutArguments(Mangled mangled) const {
-    if (ConstString demangled = mangled.GetDemangledName())
-      return demangled;
-
-    return mangled.GetMangledName();
-  }
-
   virtual void GetExceptionResolverDescription(bool catch_on, bool throw_on,
                                                Stream &s);
 

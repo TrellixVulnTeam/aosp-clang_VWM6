@@ -45,7 +45,6 @@ class Target;
 class TypeList;
 class UUID;
 class VariableList;
-struct ModuleFunctionSearchOptions;
 
 class ModuleListProperties : public Properties {
   mutable llvm::sys::RWMutex m_symlink_paths_mutex;
@@ -253,7 +252,7 @@ public:
 
   /// \see Module::FindFunctions ()
   void FindFunctions(ConstString name, lldb::FunctionNameType name_type_mask,
-                     const ModuleFunctionSearchOptions &options,
+                     bool include_symbols, bool include_inlines,
                      SymbolContextList &sc_list) const;
 
   /// \see Module::FindFunctionSymbols ()
@@ -262,9 +261,8 @@ public:
                            SymbolContextList &sc_list);
 
   /// \see Module::FindFunctions ()
-  void FindFunctions(const RegularExpression &name,
-                     const ModuleFunctionSearchOptions &options,
-                     SymbolContextList &sc_list);
+  void FindFunctions(const RegularExpression &name, bool include_symbols,
+                     bool include_inlines, SymbolContextList &sc_list);
 
   /// Find global and static variables by name.
   ///

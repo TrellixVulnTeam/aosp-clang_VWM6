@@ -504,16 +504,6 @@ set_target_properties(LLVMSymbolize PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS LLVMSymbolize )
 list(APPEND _IMPORT_CHECK_FILES_FOR_LLVMSymbolize "${_IMPORT_PREFIX}/lib64/libLLVMSymbolize.a" )
 
-# Import target "LLVMDWP" for configuration "Release"
-set_property(TARGET LLVMDWP APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(LLVMDWP PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib64/libLLVMDWP.a"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS LLVMDWP )
-list(APPEND _IMPORT_CHECK_FILES_FOR_LLVMDWP "${_IMPORT_PREFIX}/lib64/libLLVMDWP.a" )
-
 # Import target "LLVMExecutionEngine" for configuration "Release"
 set_property(TARGET LLVMExecutionEngine APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(LLVMExecutionEngine PROPERTIES
@@ -927,12 +917,12 @@ list(APPEND _IMPORT_CHECK_FILES_FOR_LLVMWindowsManifest "${_IMPORT_PREFIX}/lib64
 # Import target "LTO" for configuration "Release"
 set_property(TARGET LTO APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(LTO PROPERTIES
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib64/libLTO.so.14git"
-  IMPORTED_SONAME_RELEASE "libLTO.so.14git"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib64/libLTO.so.13git"
+  IMPORTED_SONAME_RELEASE "libLTO.so.13git"
   )
 
 list(APPEND _IMPORT_CHECK_TARGETS LTO )
-list(APPEND _IMPORT_CHECK_FILES_FOR_LTO "${_IMPORT_PREFIX}/lib64/libLTO.so.14git" )
+list(APPEND _IMPORT_CHECK_FILES_FOR_LTO "${_IMPORT_PREFIX}/lib64/libLTO.so.13git" )
 
 # Import target "llvm-ar" for configuration "Release"
 set_property(TARGET llvm-ar APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
@@ -1114,16 +1104,6 @@ set_target_properties(llvm-diff PROPERTIES
 
 list(APPEND _IMPORT_CHECK_TARGETS llvm-diff )
 list(APPEND _IMPORT_CHECK_FILES_FOR_llvm-diff "${_IMPORT_PREFIX}/bin/llvm-diff" )
-
-# Import target "LLVMDiff" for configuration "Release"
-set_property(TARGET LLVMDiff APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(LLVMDiff PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib64/libLLVMDiff.a"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS LLVMDiff )
-list(APPEND _IMPORT_CHECK_FILES_FOR_LLVMDiff "${_IMPORT_PREFIX}/lib64/libLLVMDiff.a" )
 
 # Import target "llvm-dis" for configuration "Release"
 set_property(TARGET llvm-dis APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
@@ -1401,12 +1381,12 @@ list(APPEND _IMPORT_CHECK_FILES_FOR_llvm-rtdyld "${_IMPORT_PREFIX}/bin/llvm-rtdy
 # Import target "LLVM" for configuration "Release"
 set_property(TARGET LLVM APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(LLVM PROPERTIES
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib64/libLLVM-14git.so"
-  IMPORTED_SONAME_RELEASE "libLLVM-14git.so"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib64/libLLVM-13git.so"
+  IMPORTED_SONAME_RELEASE "libLLVM-13git.so"
   )
 
 list(APPEND _IMPORT_CHECK_TARGETS LLVM )
-list(APPEND _IMPORT_CHECK_FILES_FOR_LLVM "${_IMPORT_PREFIX}/lib64/libLLVM-14git.so" )
+list(APPEND _IMPORT_CHECK_FILES_FOR_LLVM "${_IMPORT_PREFIX}/lib64/libLLVM-13git.so" )
 
 # Import target "llvm-sim" for configuration "Release"
 set_property(TARGET llvm-sim APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
@@ -1501,12 +1481,12 @@ list(APPEND _IMPORT_CHECK_FILES_FOR_opt "${_IMPORT_PREFIX}/bin/opt" )
 # Import target "Remarks" for configuration "Release"
 set_property(TARGET Remarks APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(Remarks PROPERTIES
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib64/libRemarks.so.14git"
-  IMPORTED_SONAME_RELEASE "libRemarks.so.14git"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib64/libRemarks.so.13git"
+  IMPORTED_SONAME_RELEASE "libRemarks.so.13git"
   )
 
 list(APPEND _IMPORT_CHECK_TARGETS Remarks )
-list(APPEND _IMPORT_CHECK_FILES_FOR_Remarks "${_IMPORT_PREFIX}/lib64/libRemarks.so.14git" )
+list(APPEND _IMPORT_CHECK_FILES_FOR_Remarks "${_IMPORT_PREFIX}/lib64/libRemarks.so.13git" )
 
 # Import target "sancov" for configuration "Release"
 set_property(TARGET sancov APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)

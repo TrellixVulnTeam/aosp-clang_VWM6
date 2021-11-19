@@ -37,7 +37,6 @@ public:
     DebianStretch,
     DebianBuster,
     DebianBullseye,
-    DebianBookworm,
     Exherbo,
     RHEL5,
     RHEL6,
@@ -120,7 +119,7 @@ public:
   bool IsOpenSUSE() const { return DistroVal == OpenSUSE; }
 
   bool IsDebian() const {
-    return DistroVal >= DebianLenny && DistroVal <= DebianBookworm;
+    return DistroVal >= DebianLenny && DistroVal <= DebianBullseye;
   }
 
   bool IsUbuntu() const {

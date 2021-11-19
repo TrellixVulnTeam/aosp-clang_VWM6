@@ -10,8 +10,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef LLVM_EXECUTIONENGINE_ORC_SHARED_WRAPPERFUNCTIONUTILS_H
-#define LLVM_EXECUTIONENGINE_ORC_SHARED_WRAPPERFUNCTIONUTILS_H
+#ifndef LLVM_EXECUTIONENGINE_ORC_WRAPPERFUNCTIONUTILS_H
+#define LLVM_EXECUTIONENGINE_ORC_WRAPPERFUNCTIONUTILS_H
 
 #include "llvm/ExecutionEngine/Orc/Shared/SimplePackedSerialization.h"
 #include "llvm/Support/Error.h"
@@ -89,13 +89,6 @@ public:
   }
 
   /// Get a pointer to the data contained in this instance.
-  char *data() {
-    assert((R.Size != 0 || R.Data.ValuePtr == nullptr) &&
-           "Cannot get data for out-of-band error value");
-    return R.Size > sizeof(R.Data.Value) ? R.Data.ValuePtr : R.Data.Value;
-  }
-
-  /// Get a const pointer to the data contained in this instance.
   const char *data() const {
     assert((R.Size != 0 || R.Data.ValuePtr == nullptr) &&
            "Cannot get data for out-of-band error value");
@@ -115,19 +108,24 @@ public:
 
   /// Create a WrapperFunctionResult with the given size and return a pointer
   /// to the underlying memory.
-  static WrapperFunctionResult allocate(size_t Size) {
+  static char *allocate(WrapperFunctionResult &WFR, size_t Size) {
     // Reset.
-    WrapperFunctionResult WFR;
+    WFR = WrapperFunctionResult();
     WFR.R.Size = Size;
-    if (WFR.R.Size > sizeof(WFR.R.Data.Value))
-      WFR.R.Data.ValuePtr = (char *)malloc(WFR.R.Size);
-    return WFR;
+    char *DataPtr;
+    if (WFR.R.Size > sizeof(WFR.R.Data.Value)) {
+      DataPtr = (char *)malloc(WFR.R.Size);
+      WFR.R.Data.ValuePtr = DataPtr;
+    } else
+      DataPtr = WFR.R.Data.Value;
+    return DataPtr;
   }
 
   /// Copy from the given char range.
   static WrapperFunctionResult copyFrom(const char *Source, size_t Size) {
-    auto WFR = allocate(Size);
-    memcpy(WFR.data(), Source, Size);
+    WrapperFunctionResult WFR;
+    char *DataPtr = allocate(WFR, Size);
+    memcpy(DataPtr, Source, Size);
     return WFR;
   }
 
@@ -176,8 +174,10 @@ namespace detail {
 template <typename SPSArgListT, typename... ArgTs>
 WrapperFunctionResult
 serializeViaSPSToWrapperFunctionResult(const ArgTs &...Args) {
-  auto Result = WrapperFunctionResult::allocate(SPSArgListT::size(Args...));
-  SPSOutputBuffer OB(Result.data(), Result.size());
+  WrapperFunctionResult Result;
+  char *DataPtr =
+      WrapperFunctionResult::allocate(Result, SPSArgListT::size(Args...));
+  SPSOutputBuffer OB(DataPtr, Result.size());
   if (!SPSArgListT::serialize(OB, Args...))
     return WrapperFunctionResult::createOutOfBandError(
         "Error serializing arguments to blob in call");
@@ -486,7 +486,7 @@ public:
     }
 
     auto SendSerializedResult = [SDR = std::move(SendDeserializedResult)](
-                                    WrapperFunctionResult R) mutable {
+                                    WrapperFunctionResult R) {
       RetT RetVal = detail::ResultDeserializer<SPSRetTagT, RetT>::makeValue();
       detail::ResultDeserializer<SPSRetTagT, RetT>::makeSafe(RetVal);
 
@@ -547,20 +547,6 @@ public:
     return WrapperFunction<SPSEmpty(SPSTagTs...)>::call(Caller, BE, Args...);
   }
 
-  template <typename AsyncCallerFn, typename SendDeserializedResultFn,
-            typename... ArgTs>
-  static void callAsync(AsyncCallerFn &&Caller,
-                        SendDeserializedResultFn &&SendDeserializedResult,
-                        const ArgTs &...Args) {
-    WrapperFunction<SPSEmpty(SPSTagTs...)>::callAsync(
-        Caller,
-        [SDR = std::move(SendDeserializedResult)](Error SerializeErr,
-                                                  SPSEmpty E) mutable {
-          SDR(std::move(SerializeErr));
-        },
-        Args...);
-  }
-
   using WrapperFunction<SPSEmpty(SPSTagTs...)>::handle;
   using WrapperFunction<SPSEmpty(SPSTagTs...)>::handleAsync;
 };
@@ -569,4 +555,4 @@ public:
 } // end namespace orc
 } // end namespace llvm
 
-#endif // LLVM_EXECUTIONENGINE_ORC_SHARED_WRAPPERFUNCTIONUTILS_H
+#endif // LLVM_EXECUTIONENGINE_ORC_WRAPPERFUNCTIONUTILS_H

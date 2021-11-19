@@ -28,10 +28,10 @@ public:
   MemoryRegionInfo(RangeType range, OptionalBool read, OptionalBool write,
                    OptionalBool execute, OptionalBool mapped, ConstString name,
                    OptionalBool flash, lldb::offset_t blocksize,
-                   OptionalBool memory_tagged, OptionalBool stack_memory)
+                   OptionalBool memory_tagged)
       : m_range(range), m_read(read), m_write(write), m_execute(execute),
         m_mapped(mapped), m_name(name), m_flash(flash), m_blocksize(blocksize),
-        m_memory_tagged(memory_tagged), m_is_stack_memory(stack_memory) {}
+        m_memory_tagged(memory_tagged) {}
 
   RangeType &GetRange() { return m_range; }
 
@@ -98,8 +98,7 @@ public:
            m_mapped == rhs.m_mapped && m_name == rhs.m_name &&
            m_flash == rhs.m_flash && m_blocksize == rhs.m_blocksize &&
            m_memory_tagged == rhs.m_memory_tagged &&
-           m_pagesize == rhs.m_pagesize &&
-           m_is_stack_memory == rhs.m_is_stack_memory;
+           m_pagesize == rhs.m_pagesize;
   }
 
   bool operator!=(const MemoryRegionInfo &rhs) const { return !(*this == rhs); }
@@ -116,10 +115,6 @@ public:
   llvm::Optional<std::vector<lldb::addr_t>> &GetDirtyPageList() {
     return m_dirty_pages;
   }
-
-  OptionalBool IsStackMemory() const { return m_is_stack_memory; }
-
-  void SetIsStackMemory(OptionalBool val) { m_is_stack_memory = val; }
 
   void SetPageSize(int pagesize) { m_pagesize = pagesize; }
 
@@ -139,7 +134,6 @@ protected:
   OptionalBool m_flash = eDontKnow;
   lldb::offset_t m_blocksize = 0;
   OptionalBool m_memory_tagged = eDontKnow;
-  OptionalBool m_is_stack_memory = eDontKnow;
   int m_pagesize = 0;
   llvm::Optional<std::vector<lldb::addr_t>> m_dirty_pages;
 };

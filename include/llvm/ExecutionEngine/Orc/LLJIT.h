@@ -260,7 +260,6 @@ public:
 
   using PlatformSetupFunction = std::function<Error(LLJIT &J)>;
 
-  std::unique_ptr<ExecutorProcessControl> EPC;
   std::unique_ptr<ExecutionSession> ES;
   Optional<JITTargetMachineBuilder> JTMB;
   Optional<DataLayout> DL;
@@ -268,6 +267,7 @@ public:
   CompileFunctionCreator CreateCompileFunction;
   PlatformSetupFunction SetUpPlatform;
   unsigned NumCompileThreads = 0;
+  ExecutorProcessControl *EPC = nullptr;
 
   /// Called prior to JIT class construcion to fix up defaults.
   Error prepareForConstruction();
@@ -276,17 +276,6 @@ public:
 template <typename JITType, typename SetterImpl, typename State>
 class LLJITBuilderSetters {
 public:
-  /// Set a ExecutorProcessControl for this instance.
-  /// This should not be called if ExecutionSession has already been set.
-  SetterImpl &
-  setExecutorProcessControl(std::unique_ptr<ExecutorProcessControl> EPC) {
-    assert(
-        !impl().ES &&
-        "setExecutorProcessControl should not be called if an ExecutionSession "
-        "has already been set");
-    impl().EPC = std::move(EPC);
-    return impl();
-  }
 
   /// Set an ExecutionSession for this instance.
   SetterImpl &setExecutionSession(std::unique_ptr<ExecutionSession> ES) {

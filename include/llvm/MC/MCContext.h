@@ -52,7 +52,6 @@ namespace llvm {
   class MCSection;
   class MCSectionCOFF;
   class MCSectionELF;
-  class MCSectionGOFF;
   class MCSectionMachO;
   class MCSectionWasm;
   class MCSectionXCOFF;
@@ -75,7 +74,7 @@ namespace llvm {
     using DiagHandlerTy =
         std::function<void(const SMDiagnostic &, bool, const SourceMgr &,
                            std::vector<const MDNode *> &)>;
-    enum Environment { IsMachO, IsELF, IsGOFF, IsCOFF, IsWasm, IsXCOFF };
+    enum Environment { IsMachO, IsELF, IsCOFF, IsWasm, IsXCOFF };
 
   private:
     Environment Env;
@@ -115,7 +114,6 @@ namespace llvm {
     SpecificBumpPtrAllocator<MCSectionCOFF> COFFAllocator;
     SpecificBumpPtrAllocator<MCSectionELF> ELFAllocator;
     SpecificBumpPtrAllocator<MCSectionMachO> MachOAllocator;
-    SpecificBumpPtrAllocator<MCSectionGOFF> GOFFAllocator;
     SpecificBumpPtrAllocator<MCSectionWasm> WasmAllocator;
     SpecificBumpPtrAllocator<MCSectionXCOFF> XCOFFAllocator;
     SpecificBumpPtrAllocator<MCInst> MCInstAllocator;
@@ -325,7 +323,6 @@ namespace llvm {
     StringMap<MCSectionMachO *> MachOUniquingMap;
     std::map<ELFSectionKey, MCSectionELF *> ELFUniquingMap;
     std::map<COFFSectionKey, MCSectionCOFF *> COFFUniquingMap;
-    std::map<std::string, MCSectionGOFF *> GOFFUniquingMap;
     std::map<WasmSectionKey, MCSectionWasm *> WasmUniquingMap;
     std::map<XCOFFSectionKey, MCSectionXCOFF *> XCOFFUniquingMap;
     StringMap<bool> RelSecNames;
@@ -598,8 +595,6 @@ namespace llvm {
                                                 unsigned Flags,
                                                 unsigned EntrySize);
 
-    MCSectionGOFF *getGOFFSection(StringRef Section, SectionKind Kind);
-
     MCSectionCOFF *getCOFFSection(StringRef Section, unsigned Characteristics,
                                   SectionKind Kind, StringRef COMDATSymName,
                                   int Selection,
@@ -817,7 +812,7 @@ namespace llvm {
     // Unrecoverable error has occurred. Display the best diagnostic we can
     // and bail via exit(1). For now, most MC backend errors are unrecoverable.
     // FIXME: We should really do something about that.
-    [[noreturn]] void reportFatalError(SMLoc L, const Twine &Msg);
+    LLVM_ATTRIBUTE_NORETURN void reportFatalError(SMLoc L, const Twine &Msg);
 
     const MCAsmMacro *lookupMacro(StringRef Name) {
       StringMap<MCAsmMacro>::iterator I = MacroMap.find(Name);

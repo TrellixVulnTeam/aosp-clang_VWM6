@@ -56,20 +56,15 @@ template <> struct IRTraits<BasicBlock> {
   using FunctionT = Function;
   using BlockFrequencyInfoT = BlockFrequencyInfo;
   using LoopT = Loop;
-  using LoopInfoPtrT = std::unique_ptr<LoopInfo>;
-  using DominatorTreePtrT = std::unique_ptr<DominatorTree>;
-  using PostDominatorTreeT = PostDominatorTree;
-  using PostDominatorTreePtrT = std::unique_ptr<PostDominatorTree>;
+  using LoopInfoT = LoopInfo;
   using OptRemarkEmitterT = OptimizationRemarkEmitter;
   using OptRemarkAnalysisT = OptimizationRemarkAnalysis;
-  using PredRangeT = pred_range;
-  using SuccRangeT = succ_range;
+  using DominatorTreeT = DominatorTree;
+  using PostDominatorTreeT = PostDominatorTree;
   static Function &getFunction(Function &F) { return F; }
   static const BasicBlock *getEntryBB(const Function *F) {
     return &F->getEntryBlock();
   }
-  static pred_range getPredecessors(BasicBlock *BB) { return predecessors(BB); }
-  static succ_range getSuccessors(BasicBlock *BB) { return successors(BB); }
 };
 
 } // end namespace afdo_detail
@@ -81,8 +76,7 @@ extern cl::opt<bool> NoWarnSampleUnused;
 
 template <typename BT> class SampleProfileLoaderBaseImpl {
 public:
-  SampleProfileLoaderBaseImpl(std::string Name, std::string RemapName)
-      : Filename(Name), RemappingFilename(RemapName) {}
+  SampleProfileLoaderBaseImpl(std::string Name) : Filename(Name) {}
   void dump() { Reader->dump(); }
 
   using InstructionT = typename afdo_detail::IRTraits<BT>::InstructionT;
@@ -91,19 +85,14 @@ public:
       typename afdo_detail::IRTraits<BT>::BlockFrequencyInfoT;
   using FunctionT = typename afdo_detail::IRTraits<BT>::FunctionT;
   using LoopT = typename afdo_detail::IRTraits<BT>::LoopT;
-  using LoopInfoPtrT = typename afdo_detail::IRTraits<BT>::LoopInfoPtrT;
-  using DominatorTreePtrT =
-      typename afdo_detail::IRTraits<BT>::DominatorTreePtrT;
-  using PostDominatorTreePtrT =
-      typename afdo_detail::IRTraits<BT>::PostDominatorTreePtrT;
-  using PostDominatorTreeT =
-      typename afdo_detail::IRTraits<BT>::PostDominatorTreeT;
+  using LoopInfoT = typename afdo_detail::IRTraits<BT>::LoopInfoT;
   using OptRemarkEmitterT =
       typename afdo_detail::IRTraits<BT>::OptRemarkEmitterT;
   using OptRemarkAnalysisT =
       typename afdo_detail::IRTraits<BT>::OptRemarkAnalysisT;
-  using PredRangeT = typename afdo_detail::IRTraits<BT>::PredRangeT;
-  using SuccRangeT = typename afdo_detail::IRTraits<BT>::SuccRangeT;
+  using DominatorTreeT = typename afdo_detail::IRTraits<BT>::DominatorTreeT;
+  using PostDominatorTreeT =
+      typename afdo_detail::IRTraits<BT>::PostDominatorTreeT;
 
   using BlockWeightMap = DenseMap<const BasicBlockT *, uint64_t>;
   using EquivalenceClassMap =
@@ -123,12 +112,6 @@ protected:
   const BasicBlockT *getEntryBB(const FunctionT *F) {
     return afdo_detail::IRTraits<BT>::getEntryBB(F);
   }
-  PredRangeT getPredecessors(BasicBlockT *BB) {
-    return afdo_detail::IRTraits<BT>::getPredecessors(BB);
-  }
-  SuccRangeT getSuccessors(BasicBlockT *BB) {
-    return afdo_detail::IRTraits<BT>::getSuccessors(BB);
-  }
 
   unsigned getFunctionLoc(FunctionT &Func);
   virtual ErrorOr<uint64_t> getInstWeight(const InstructionT &Inst);
@@ -146,11 +129,12 @@ protected:
   void findEquivalencesFor(BasicBlockT *BB1,
                            ArrayRef<BasicBlockT *> Descendants,
                            PostDominatorTreeT *DomTree);
+
   void propagateWeights(FunctionT &F);
   uint64_t visitEdge(Edge E, unsigned *NumUnknownEdges, Edge *UnknownEdge);
   void buildEdges(FunctionT &F);
   bool propagateThroughEdges(FunctionT &F, bool UpdateBlockCount);
-  void clearFunctionData(bool ResetDT = true);
+  void clearFunctionData();
   void computeDominanceAndLoopInfo(FunctionT &F);
   bool
   computeAndPropagateWeights(FunctionT &F,
@@ -184,9 +168,9 @@ protected:
   EquivalenceClassMap EquivalenceClass;
 
   /// Dominance, post-dominance and loop information.
-  DominatorTreePtrT DT;
-  PostDominatorTreePtrT PDT;
-  LoopInfoPtrT LI;
+  std::unique_ptr<DominatorTreeT> DT;
+  std::unique_ptr<PostDominatorTreeT> PDT;
+  std::unique_ptr<LoopInfoT> LI;
 
   /// Predecessors for each basic block in the CFG.
   BlockEdgeMap Predecessors;
@@ -206,9 +190,6 @@ protected:
   /// Name of the profile file to load.
   std::string Filename;
 
-  /// Name of the profile remapping file to load.
-  std::string RemappingFilename;
-
   /// Profile Summary Info computed from sample profile.
   ProfileSummaryInfo *PSI = nullptr;
 
@@ -218,17 +199,15 @@ protected:
 
 /// Clear all the per-function data used to load samples and propagate weights.
 template <typename BT>
-void SampleProfileLoaderBaseImpl<BT>::clearFunctionData(bool ResetDT) {
+void SampleProfileLoaderBaseImpl<BT>::clearFunctionData() {
   BlockWeights.clear();
   EdgeWeights.clear();
   VisitedBlocks.clear();
   VisitedEdges.clear();
   EquivalenceClass.clear();
-  if (ResetDT) {
-    DT = nullptr;
-    PDT = nullptr;
-    LI = nullptr;
-  }
+  DT = nullptr;
+  PDT = nullptr;
+  LI = nullptr;
   Predecessors.clear();
   Successors.clear();
   CoverageTracker.clear();
@@ -496,7 +475,7 @@ void SampleProfileLoaderBaseImpl<BT>::findEquivalenceClasses(FunctionT &F) {
     // class by making BB2's equivalence class be BB1.
     DominatedBBs.clear();
     DT->getDescendants(BB1, DominatedBBs);
-    findEquivalencesFor(BB1, DominatedBBs, &*PDT);
+    findEquivalencesFor(BB1, DominatedBBs, PDT.get());
 
     LLVM_DEBUG(printBlockEquivalence(dbgs(), BB1));
   }
@@ -713,7 +692,7 @@ void SampleProfileLoaderBaseImpl<BT>::buildEdges(FunctionT &F) {
     SmallPtrSet<BasicBlockT *, 16> Visited;
     if (!Predecessors[B1].empty())
       llvm_unreachable("Found a stale predecessors list in a basic block.");
-    for (auto *B2 : getPredecessors(B1))
+    for (BasicBlockT *B2 : predecessors(B1))
       if (Visited.insert(B2).second)
         Predecessors[B1].push_back(B2);
 
@@ -721,7 +700,7 @@ void SampleProfileLoaderBaseImpl<BT>::buildEdges(FunctionT &F) {
     Visited.clear();
     if (!Successors[B1].empty())
       llvm_unreachable("Found a stale successors list in a basic block.");
-    for (auto *B2 : getSuccessors(B1))
+    for (BasicBlockT *B2 : successors(B1))
       if (Visited.insert(B2).second)
         Successors[B1].push_back(B2);
   }
@@ -932,12 +911,12 @@ unsigned SampleProfileLoaderBaseImpl<BT>::getFunctionLoc(FunctionT &F) {
 template <typename BT>
 void SampleProfileLoaderBaseImpl<BT>::computeDominanceAndLoopInfo(
     FunctionT &F) {
-  DT.reset(new DominatorTree);
+  DT.reset(new DominatorTreeT);
   DT->recalculate(F);
 
   PDT.reset(new PostDominatorTree(F));
 
-  LI.reset(new LoopInfo);
+  LI.reset(new LoopInfoT);
   LI->analyze(*DT);
 }
 

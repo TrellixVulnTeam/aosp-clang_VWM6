@@ -231,7 +231,7 @@ function(add_link_opts target_name)
       elseif(LINKER_IS_LLD_LINK)
         set_property(TARGET ${target_name} APPEND_STRING PROPERTY
                       LINK_FLAGS " /opt:lldlto=0")
-      elseif(APPLE AND NOT uppercase_LLVM_ENABLE_LTO STREQUAL "THIN")
+      elseif(APPLE)
         set_property(TARGET ${target_name} APPEND_STRING PROPERTY
                       LINK_FLAGS " -Wl,-mllvm,-O0")
       endif()
@@ -486,9 +486,6 @@ function(llvm_add_library name)
     # Do add_dependencies(obj) later due to CMake issue 14747.
     list(APPEND objlibs ${obj_name})
 
-    # Bring in the target include directories from our original target.
-    target_include_directories(${obj_name} PRIVATE $<TARGET_PROPERTY:${name},INCLUDE_DIRECTORIES>)
-
     set_target_properties(${obj_name} PROPERTIES FOLDER "Object Libraries")
     if(ARG_DEPENDS)
       add_dependencies(${obj_name} ${ARG_DEPENDS})
@@ -528,11 +525,6 @@ function(llvm_add_library name)
       LINK_LIBS ${ARG_LINK_LIBS}
       LINK_COMPONENTS ${ARG_LINK_COMPONENTS}
       )
-
-    # Bring in the target link info from our original target.
-    target_link_directories(${name_static} PRIVATE $<TARGET_PROPERTY:${name},LINK_DIRECTORIES>)
-    target_link_libraries(${name_static} PRIVATE $<TARGET_PROPERTY:${name},LINK_LIBRARIES>)
-
     # FIXME: Add name_static to anywhere in TARGET ${name}'s PROPERTY.
     set(ARG_STATIC)
   endif()
@@ -614,7 +606,7 @@ function(llvm_add_library name)
     endif()
   endif()
 
-  if(ARG_SHARED)
+  if(ARG_SHARED AND UNIX)
     if(NOT APPLE AND ARG_SONAME)
       get_target_property(output_name ${name} OUTPUT_NAME)
       if(${output_name} STREQUAL "output_name-NOTFOUND")
@@ -623,12 +615,10 @@ function(llvm_add_library name)
       set(library_name ${output_name}-${LLVM_VERSION_MAJOR}${LLVM_VERSION_SUFFIX})
       set(api_name ${output_name}-${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.${LLVM_VERSION_PATCH}${LLVM_VERSION_SUFFIX})
       set_target_properties(${name} PROPERTIES OUTPUT_NAME ${library_name})
-      if(UNIX)
-        llvm_install_library_symlink(${api_name} ${library_name} SHARED
-          COMPONENT ${name})
-        llvm_install_library_symlink(${output_name} ${library_name} SHARED
-          COMPONENT ${name})
-      endif()
+      llvm_install_library_symlink(${api_name} ${library_name} SHARED
+        COMPONENT ${name})
+      llvm_install_library_symlink(${output_name} ${library_name} SHARED
+        COMPONENT ${name})
     endif()
   endif()
 
@@ -661,9 +651,10 @@ function(llvm_add_library name)
     # property has been set to an empty value.
     set_property(TARGET ${name} PROPERTY LLVM_LINK_COMPONENTS ${ARG_LINK_COMPONENTS} ${LLVM_LINK_COMPONENTS})
 
-    # This property is an internal property only used to make sure the
+    # These two properties are internal properties only used to make sure the
     # link step applied in LLVMBuildResolveComponentsLink uses the same
-    # property as the target_link_libraries call below.
+    # properties as the target_link_libraries call below.
+    set_property(TARGET ${name} PROPERTY LLVM_LINK_LIBS ${ARG_LINK_LIBS})
     set_property(TARGET ${name} PROPERTY LLVM_LIBTYPE ${libtype})
   endif()
 
@@ -1208,7 +1199,6 @@ if(NOT LLVM_TOOLCHAIN_TOOLS)
     llvm-objcopy
     llvm-objdump
     llvm-rc
-    llvm-readobj
     llvm-size
     llvm-strings
     llvm-strip
@@ -1223,7 +1213,6 @@ if(NOT LLVM_TOOLCHAIN_TOOLS)
     nm
     objcopy
     objdump
-    readelf
     size
     strings
     strip
@@ -1478,7 +1467,7 @@ function(add_unittest test_suite test_name)
     elseif(LINKER_IS_LLD_LINK)
       set_property(TARGET ${test_name} APPEND_STRING PROPERTY
                     LINK_FLAGS " /opt:lldlto=0")
-    elseif(APPLE AND NOT uppercase_LLVM_ENABLE_LTO STREQUAL "THIN")
+    elseif(APPLE)
       set_property(TARGET ${target_name} APPEND_STRING PROPERTY
                     LINK_FLAGS " -Wl,-mllvm,-O0")
     endif()

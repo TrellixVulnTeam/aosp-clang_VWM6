@@ -80,11 +80,13 @@ struct VFParameter {
 /// represent vector functions. in particular, it is not attached to
 /// any target-specific ABI.
 struct VFShape {
-  ElementCount VF;                        // Vectorization factor.
+  unsigned VF;     // Vectorization factor.
+  bool IsScalable; // True if the function is a scalable function.
   SmallVector<VFParameter, 8> Parameters; // List of parameter information.
   // Comparison operator.
   bool operator==(const VFShape &Other) const {
-    return std::tie(VF, Parameters) == std::tie(Other.VF, Other.Parameters);
+    return std::tie(VF, IsScalable, Parameters) ==
+           std::tie(Other.VF, Other.IsScalable, Other.Parameters);
   }
 
   /// Update the parameter in position P.ParamPos to P.
@@ -113,7 +115,7 @@ struct VFShape {
       Parameters.push_back(
           VFParameter({CI.arg_size(), VFParamKind::GlobalPredicate}));
 
-    return {EC, Parameters};
+    return {EC.getKnownMinValue(), EC.isScalable(), Parameters};
   }
   /// Sanity check on the Parameters in the VFShape.
   bool hasValidParameterList() const;
@@ -686,8 +688,10 @@ public:
     if (getMember(getFactor() - 1))
       return false;
 
-    // We have a group with gaps. It therefore can't be a reversed access,
-    // because such groups get invalidated (TODO).
+    // We have a group with gaps. It therefore cannot be a group of stores,
+    // and it can't be a reversed access, because such groups get invalidated.
+    assert(!getMember(0)->mayWriteToMemory() &&
+           "Group should have been invalidated");
     assert(!isReverse() && "Group should have been invalidated");
 
     // This is a group of loads, with gaps, and without a last-member

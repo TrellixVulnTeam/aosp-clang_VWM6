@@ -15,6 +15,9 @@
 #pragma GCC system_header
 #endif
 
+_LIBCPP_PUSH_MACROS
+#include <__undef_macros>
+
 _LIBCPP_BEGIN_NAMESPACE_STD
 
 struct _LIBCPP_TEMPLATE_VIS piecewise_construct_t { explicit piecewise_construct_t() = default; };
@@ -25,5 +28,7 @@ extern _LIBCPP_EXPORTED_FROM_ABI const piecewise_construct_t piecewise_construct
 #endif
 
 _LIBCPP_END_NAMESPACE_STD
+
+_LIBCPP_POP_MACROS
 
 #endif // _LIBCPP___UTILITY_PIECEWISE_CONSTRUCT_H

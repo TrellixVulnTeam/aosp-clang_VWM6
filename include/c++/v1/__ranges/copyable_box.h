@@ -22,6 +22,9 @@
 #pragma GCC system_header
 #endif
 
+_LIBCPP_PUSH_MACROS
+#include <__undef_macros>
+
 _LIBCPP_BEGIN_NAMESPACE_STD
 
 #if !defined(_LIBCPP_HAS_NO_RANGES)
@@ -88,10 +91,6 @@ namespace ranges {
 
     _LIBCPP_HIDE_FROM_ABI constexpr _Tp const& operator*() const noexcept { return *__val_; }
     _LIBCPP_HIDE_FROM_ABI constexpr _Tp& operator*() noexcept { return *__val_; }
-
-    _LIBCPP_HIDE_FROM_ABI constexpr const _Tp *operator->() const noexcept { return __val_.operator->(); }
-    _LIBCPP_HIDE_FROM_ABI constexpr _Tp *operator->() noexcept { return __val_.operator->(); }
-
     _LIBCPP_HIDE_FROM_ABI constexpr bool __has_value() const noexcept { return __val_.has_value(); }
   };
 
@@ -163,10 +162,6 @@ namespace ranges {
 
     _LIBCPP_HIDE_FROM_ABI constexpr _Tp const& operator*() const noexcept { return __val_; }
     _LIBCPP_HIDE_FROM_ABI constexpr _Tp& operator*() noexcept { return __val_; }
-
-    _LIBCPP_HIDE_FROM_ABI constexpr const _Tp *operator->() const noexcept { return _VSTD::addressof(__val_); }
-    _LIBCPP_HIDE_FROM_ABI constexpr _Tp *operator->() noexcept { return _VSTD::addressof(__val_); }
-
     _LIBCPP_HIDE_FROM_ABI constexpr bool __has_value() const noexcept { return true; }
   };
 } // namespace ranges
@@ -174,5 +169,7 @@ namespace ranges {
 #endif // !defined(_LIBCPP_HAS_NO_RANGES)
 
 _LIBCPP_END_NAMESPACE_STD
+
+_LIBCPP_POP_MACROS
 
 #endif // _LIBCPP___RANGES_COPYABLE_BOX_H

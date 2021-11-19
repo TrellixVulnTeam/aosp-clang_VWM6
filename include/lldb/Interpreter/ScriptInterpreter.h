@@ -144,8 +144,7 @@ public:
 
   ScriptInterpreter(
       Debugger &debugger, lldb::ScriptLanguage script_lang,
-      lldb::ScriptedProcessInterfaceUP scripted_process_interface_up =
-          std::make_unique<ScriptedProcessInterface>());
+      lldb::ScriptedProcessInterfaceUP scripted_process_interface_up = {});
 
   ~ScriptInterpreter() override = default;
 

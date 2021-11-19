@@ -363,10 +363,6 @@ class FileEntry;
 /// A SourceLocation and its associated SourceManager.
 ///
 /// This is useful for argument passing to functions that expect both objects.
-///
-/// This class does not guarantee the presence of either the SourceManager or
-/// a valid SourceLocation. Clients should use `isValid()` and `hasManager()`
-/// before calling the member functions.
 class FullSourceLoc : public SourceLocation {
   const SourceManager *SrcMgr = nullptr;
 
@@ -377,10 +373,13 @@ public:
   explicit FullSourceLoc(SourceLocation Loc, const SourceManager &SM)
       : SourceLocation(Loc), SrcMgr(&SM) {}
 
-  /// Checks whether the SourceManager is present.
-  bool hasManager() const { return SrcMgr != nullptr; }
+  bool hasManager() const {
+      bool hasSrcMgr =  SrcMgr != nullptr;
+      assert(hasSrcMgr == isValid() && "FullSourceLoc has location but no manager");
+      return hasSrcMgr;
+  }
 
-  /// \pre hasManager()
+  /// \pre This FullSourceLoc has an associated SourceManager.
   const SourceManager &getManager() const {
     assert(SrcMgr && "SourceManager is NULL.");
     return *SrcMgr;

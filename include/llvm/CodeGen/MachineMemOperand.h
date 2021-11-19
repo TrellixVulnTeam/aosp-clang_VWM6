@@ -282,7 +282,17 @@ public:
   /// success and failure orderings for an atomic operation.  (For operations
   /// other than cmpxchg, this is equivalent to getSuccessOrdering().)
   AtomicOrdering getMergedOrdering() const {
-    return getMergedAtomicOrdering(getSuccessOrdering(), getFailureOrdering());
+    AtomicOrdering Ordering = getSuccessOrdering();
+    AtomicOrdering FailureOrdering = getFailureOrdering();
+    if (FailureOrdering == AtomicOrdering::SequentiallyConsistent)
+      return AtomicOrdering::SequentiallyConsistent;
+    if (FailureOrdering == AtomicOrdering::Acquire) {
+      if (Ordering == AtomicOrdering::Monotonic)
+        return AtomicOrdering::Acquire;
+      if (Ordering == AtomicOrdering::Release)
+        return AtomicOrdering::AcquireRelease;
+    }
+    return Ordering;
   }
 
   bool isLoad() const { return FlagVals & MOLoad; }

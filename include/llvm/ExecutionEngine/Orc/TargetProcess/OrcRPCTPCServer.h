@@ -33,6 +33,14 @@ namespace orc {
 
 namespace orcrpctpc {
 
+enum WireProtectionFlags : uint8_t {
+  WPF_None = 0,
+  WPF_Read = 1U << 0,
+  WPF_Write = 1U << 1,
+  WPF_Exec = 1U << 2,
+  LLVM_MARK_AS_BITMASK_ENUM(WPF_Exec)
+};
+
 struct ExecutorProcessInfo {
   std::string Triple;
   unsigned PageSize;
@@ -40,8 +48,33 @@ struct ExecutorProcessInfo {
   JITTargetAddress DispatchCtxAddr;
 };
 
+/// Convert from sys::Memory::ProtectionFlags
+inline WireProtectionFlags
+toWireProtectionFlags(sys::Memory::ProtectionFlags PF) {
+  WireProtectionFlags WPF = WPF_None;
+  if (PF & sys::Memory::MF_READ)
+    WPF |= WPF_Read;
+  if (PF & sys::Memory::MF_WRITE)
+    WPF |= WPF_Write;
+  if (PF & sys::Memory::MF_EXEC)
+    WPF |= WPF_Exec;
+  return WPF;
+}
+
+inline sys::Memory::ProtectionFlags
+fromWireProtectionFlags(WireProtectionFlags WPF) {
+  int PF = 0;
+  if (WPF & WPF_Read)
+    PF |= sys::Memory::MF_READ;
+  if (WPF & WPF_Write)
+    PF |= sys::Memory::MF_WRITE;
+  if (WPF & WPF_Exec)
+    PF |= sys::Memory::MF_EXEC;
+  return static_cast<sys::Memory::ProtectionFlags>(PF);
+}
+
 struct ReserveMemRequestElement {
-  tpctypes::WireProtectionFlags Prot = tpctypes::WPF_None;
+  WireProtectionFlags Prot = WPF_None;
   uint64_t Size = 0;
   uint64_t Alignment = 0;
 };
@@ -49,7 +82,7 @@ struct ReserveMemRequestElement {
 using ReserveMemRequest = std::vector<ReserveMemRequestElement>;
 
 struct ReserveMemResultElement {
-  tpctypes::WireProtectionFlags Prot = tpctypes::WPF_None;
+  WireProtectionFlags Prot = WPF_None;
   JITTargetAddress Address = 0;
   uint64_t AllocatedSize = 0;
 };
@@ -57,7 +90,7 @@ struct ReserveMemResultElement {
 using ReserveMemResult = std::vector<ReserveMemResultElement>;
 
 struct ReleaseOrFinalizeMemRequestElement {
-  tpctypes::WireProtectionFlags Prot = tpctypes::WPF_None;
+  WireProtectionFlags Prot = WPF_None;
   JITTargetAddress Address = 0;
   uint64_t Size = 0;
 };
@@ -92,9 +125,10 @@ public:
     if (auto Err = deserializeSeq(C, Size))
       return Err;
 
-    auto Tmp = WrapperFunctionResult::allocate(Size);
+    WrapperFunctionResult Tmp;
+    char *Data = WrapperFunctionResult::allocate(Tmp, Size);
 
-    if (auto Err = C.readBytes(Tmp.data(), Tmp.size()))
+    if (auto Err = C.readBytes(Data, Size))
       return Err;
 
     E = std::move(Tmp);
@@ -459,6 +493,14 @@ private:
       *jitTargetAddressToPointer<ValueT *>(W.Address) = W.Value;
   }
 
+  std::string getProtStr(orcrpctpc::WireProtectionFlags WPF) {
+    std::string Result;
+    Result += (WPF & orcrpctpc::WPF_Read) ? 'R' : '-';
+    Result += (WPF & orcrpctpc::WPF_Write) ? 'W' : '-';
+    Result += (WPF & orcrpctpc::WPF_Exec) ? 'X' : '-';
+    return Result;
+  }
+
   static void handleWriteBuffer(const std::vector<tpctypes::BufferWrite> &Ws) {
     for (auto &W : Ws) {
       memcpy(jitTargetAddressToPointer<char *>(W.Address), W.Buffer.data(),
@@ -513,7 +555,7 @@ private:
     for (const auto &E : FMR) {
       sys::MemoryBlock MB(jitTargetAddressToPointer<void *>(E.Address), E.Size);
 
-      auto PF = tpctypes::fromWireProtectionFlags(E.Prot);
+      auto PF = orcrpctpc::fromWireProtectionFlags(E.Prot);
       if (auto EC =
               sys::Memory::protectMappedMemory(MB, static_cast<unsigned>(PF)))
         return make_error<StringError>("error protecting memory: " +

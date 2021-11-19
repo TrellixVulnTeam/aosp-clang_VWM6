@@ -31,12 +31,8 @@ enum class CudaVersion {
   CUDA_110,
   CUDA_111,
   CUDA_112,
-  CUDA_113,
-  CUDA_114,
-  FULLY_SUPPORTED = CUDA_114,
-  PARTIALLY_SUPPORTED =
-      CUDA_114, // Partially supported. Proceed with a warning.
-  NEW = 10000,  // Too new. Issue a warning, but allow using it.
+  LATEST = CUDA_112,
+  LATEST_SUPPORTED = CUDA_101,
 };
 const char *CudaVersionToString(CudaVersion V);
 // Input is "Major.Minor"
